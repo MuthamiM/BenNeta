@@ -204,5 +204,6 @@ def fetch_todays_gmail_inbox(limit=30):
                 pass
 
 if __name__ == "__main__":
-    res = fetch_todays_gmail_inbox(limit=10)
-    print(f"[+] Retrieved {res.get('total_today')} emails from today's inbox.")
+    import json
+    res = fetch_todays_gmail_inbox(limit=25)
+    print(json.dumps(res))

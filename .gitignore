@@ -21,7 +21,12 @@ venv/
 rust/target/
 Cargo.lock
 
-# Operating system files
+# Operating system and build packages
+*.deb
+*.zip
+dist/
+benneta_1.0.0_amd64.deb
+data/
 .DS_Store
 Thumbs.db
 desktop.ini

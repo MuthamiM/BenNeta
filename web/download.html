@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Download BenNeta - PC Intelligence & Automation Microservices</title>
+  <meta name="description" content="Download BenNeta for Linux (.deb) and Windows. Lightweight personal AI assistant, live Gmail triage, Brave Search email drafting, and API security sentinel with strict 28MB RAM limit.">
+  
+  <!-- Favicons and App Icons -->
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+  <link rel="manifest" href="/assets/site.webmanifest">
+  <meta name="theme-color" content="#d97757">
+
+  <!-- Design System CSS -->
+  <link rel="stylesheet" href="/assets/theme.css">
+
+  <style>
+    /* Hero & Landing Page Styles */
+    .landing-body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: radial-gradient(circle at 50% 0%, #1c202d 0%, #0c0e12 70%);
+      overflow-x: hidden;
+    }
+
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 48px;
+      border-bottom: 1px solid var(--border-subtle);
+      background: rgba(12, 14, 18, 0.75);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+    }
+
+    .brand-logo-img {
+      height: 38px;
+      width: auto;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .hero-section {
+      text-align: center;
+      padding: 72px 24px 48px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      background: rgba(217, 119, 87, 0.12);
+      border: 1px solid rgba(217, 119, 87, 0.35);
+      color: #e58869;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      letter-spacing: 0.3px;
+    }
+
+    .hero-title {
+      font-size: 52px;
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      line-height: 1.15;
+      margin: 0 0 20px;
+      color: var(--text-primary);
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, #e58869 0%, #d97757 60%, #c46344 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-sub {
+      font-size: 19px;
+      color: var(--text-secondary);
+      max-width: 680px;
+      margin: 0 auto 36px;
+      line-height: 1.55;
+    }
+
+    /* Detected OS Card */
+    .detected-os-card {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 18px;
+      border-radius: var(--radius-md);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      margin-bottom: 28px;
+    }
+
+    .os-indicator-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--color-success);
+      box-shadow: 0 0 8px var(--color-success);
+    }
+
+    /* Primary CTA Button (Dynamic) */
+    .cta-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 48px;
+    }
+
+    .btn-download-hero {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 36px;
+      background: linear-gradient(135deg, #e08264 0%, #d97757 100%);
+      color: #ffffff;
+      font-size: 17px;
+      font-weight: 700;
+      border-radius: var(--radius-lg);
+      text-decoration: none;
+      box-shadow: 0 8px 28px rgba(217, 119, 87, 0.4);
+      transition: all var(--transition-fast);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-download-hero:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 34px rgba(217, 119, 87, 0.55);
+      background: linear-gradient(135deg, #e58869 0%, #cc6b49 100%);
+    }
+
+    .cta-secondary-link {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      cursor: pointer;
+      text-decoration: underline;
+      transition: color var(--transition-fast);
+    }
+
+    .cta-secondary-link:hover {
+      color: var(--color-primary);
+    }
+
+    /* Terminal Quick Install Box */
+    .terminal-box {
+      background: #090b0e;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      color: #38bdf8;
+      max-width: 620px;
+      width: 100%;
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.6);
+    }
+
+    .terminal-prompt {
+      color: var(--text-muted);
+      user-select: none;
+    }
+
+    .terminal-code {
+      flex: 1;
+      text-align: left;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .btn-copy-code {
+      background: var(--bg-surface-elevated);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      padding: 5px 12px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .btn-copy-code:hover {
+      background: var(--bg-surface-active);
+      color: #ffffff;
+    }
+
+    /* Platforms Grid */
+    .section-title {
+      font-size: 28px;
+      font-weight: 700;
+      text-align: center;
+      margin: 64px 0 32px;
+      color: var(--text-primary);
+    }
+
+    .platforms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      max-width: 960px;
+      margin: 0 auto 64px;
+      padding: 0 24px;
+    }
+
+    .platform-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all var(--transition-fast);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .platform-card:hover {
+      border-color: var(--color-primary-border);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-card);
+    }
+
+    .platform-card.recommended::before {
+      content: "RECOMMENDED FOR YOUR OS";
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      background: rgba(217, 119, 87, 0.15);
+      border: 1px solid var(--color-primary-border);
+      color: var(--color-primary);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .platform-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .platform-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-default);
+    }
+
+    .platform-info h3 {
+      margin: 0 0 4px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .platform-info p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .checksum-meta {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      background: var(--bg-canvas);
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      margin: 16px 0;
+      word-break: break-all;
+    }
+
+    /* Specs Banner */
+    .specs-strip {
+      background: rgba(20, 23, 32, 0.6);
+      border-top: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      flex-wrap: wrap;
+      margin-bottom: 64px;
+    }
+
+    .spec-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .spec-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--color-primary);
+      font-family: var(--font-mono);
+    }
+
+    .spec-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: auto;
+      border-top: 1px solid var(--border-subtle);
+      padding: 32px 48px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body class="landing-body">
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <a href="/" class="brand-wrap">
+      <img src="/assets/logo.svg" alt="BenNeta Logo" class="brand-logo-img">
+    </a>
+    <div class="nav-links">
+      <span class="ram-badge ok" id="navRamBadge">RAM BUDGET: MAX 28MB</span>
+      <a href="/" class="btn-secondary">Open Web Dashboard</a>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="hero-section">
+    <div class="hero-badge">BENNETA 1.0.0 RELEASE - ZERO EMOJIS - STRICT EFFICIENCY</div>
+    <h1 class="hero-title">
+      PC Intelligence &amp; <span>Microservices Platform</span>
+    </h1>
+    <p class="hero-sub">
+      Live Gmail triage, Brave Search email drafting, API Security Sentinel, and 10 automated system tasks. Engineered for laptops with a strict 28MB RAM budget.
+    </p>
+
+    <!-- Detected OS Badge -->
+    <div class="detected-os-card" id="detectedOsCard">
+      <div class="os-indicator-dot"></div>
+      <span id="detectedOsText">Detecting operating system...</span>
+    </div>
+
+    <!-- Dynamic Download CTA -->
+    <div class="cta-container">
+      <a href="/downloads/benneta_1.0.0_amd64.deb" id="primaryDownloadBtn" class="btn-download-hero" download>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        <span id="primaryDownloadLabel">Download BenNeta for Linux (.deb)</span>
+      </a>
+
+      <div class="cta-secondary-link" id="secondaryOsToggle" onclick="toggleSecondaryOs()">
+        Looking for Windows 10/11? Click here to switch download
+      </div>
+    </div>
+
+    <!-- Quick Terminal Install Command -->
+    <div class="terminal-box" id="terminalSnippet">
+      <span class="terminal-prompt">$</span>
+      <span class="terminal-code" id="terminalCmdText">sudo dpkg -i benneta_1.0.0_amd64.deb &amp;&amp; benneta web</span>
+      <button class="btn-copy-code" id="btnCopyCode" onclick="copyTerminalCmd()">Copy</button>
+    </div>
+  </main>
+
+  <!-- Specs Strip -->
+  <section class="specs-strip">
+    <div class="spec-item">
+      <div class="spec-value">28 MB</div>
+      <div class="spec-label">Max RAM Cap (Enforced)</div>
+    </div>
+    <div class="spec-item">
+      <div class="spec-value">10 Tasks</div>
+      <div class="spec-label">Automated System Tasks</div>
+    </div>
+    <div class="spec-item">
+      <div class="spec-value">0.70s</div>
+      <div class="spec-label">Rust Daemon Startup</div>
+    </div>
+    <div class="spec-item">
+      <div class="spec-value">Local-First</div>
+      <div class="spec-label">Zero Cloud Data Lock-in</div>
+    </div>
+  </section>
+
+  <!-- Platforms Grid -->
+  <h2 class="section-title">Available Installation Packages</h2>
+  <div class="platforms-grid">
+    
+    <!-- Linux Debian / Ubuntu Card -->
+    <div class="platform-card" id="cardLinux">
+      <div>
+        <div class="platform-header">
+          <div class="platform-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d97757" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+          </div>
+          <div class="platform-info">
+            <h3>Linux (.deb)</h3>
+            <p>Ubuntu 20.04+, Debian 11+, Mint (x86_64)</p>
+          </div>
+        </div>
+        <p style="font-size: 13.5px; color: var(--text-secondary); line-height: 1.5;">
+          Includes native systemd service with cgroup 28MB RAM caps, desktop launcher, CLI binary, and local web dashboard.
+        </p>
+        <div class="checksum-meta">
+          <strong>Size:</strong> 244 KB &bull; <strong>Package:</strong> benneta_1.0.0_amd64.deb<br>
+          <strong>SHA-256:</strong> <span id="debSha">Loading hash...</span>
+        </div>
+      </div>
+      <a href="/downloads/benneta_1.0.0_amd64.deb" class="btn-primary" download style="margin-top: 14px;">
+        Download Debian Package (.deb)
+      </a>
+    </div>
+
+    <!-- Windows Standalone Card -->
+    <div class="platform-card" id="cardWindows">
+      <div>
+        <div class="platform-header">
+          <div class="platform-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2">
+              <rect x="3" y="3" width="8" height="8"></rect>
+              <rect x="13" y="3" width="8" height="8"></rect>
+              <rect x="3" y="13" width="8" height="8"></rect>
+              <rect x="13" y="13" width="8" height="8"></rect>
+            </svg>
+          </div>
+          <div class="platform-info">
+            <h3>Windows (.zip / .exe)</h3>
+            <p>Windows 10 / 11 64-bit (x64)</p>
+          </div>
+        </div>
+        <p style="font-size: 13.5px; color: var(--text-secondary); line-height: 1.5;">
+          Includes compiled Rust launcher (benneta.exe), background daemon, batch automation, and local microservices.
+        </p>
+        <div class="checksum-meta">
+          <strong>Size:</strong> 999 KB &bull; <strong>Package:</strong> benneta_windows_x64.zip<br>
+          <strong>SHA-256:</strong> <span id="winSha">Loading hash...</span>
+        </div>
+      </div>
+      <a href="/downloads/benneta_windows_x64.zip" class="btn-secondary" download style="margin-top: 14px;">
+        Download Windows Package (.zip)
+      </a>
+    </div>
+
+  </div>
+
+  <!-- Cookie & Usage Consent Banner -->
+  <div class="cookie-banner" id="cookieBanner" style="display: none;">
+    <div style="font-size: 14px; font-weight: 700; margin-bottom: 6px; color: var(--text-primary);">
+      Privacy &amp; Local Usage Telemetry
+    </div>
+    <div style="font-size: 12.5px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 14px;">
+      BenNeta uses local session cookies and records anonymous execution metrics (task duration, RAM telemetry) strictly on your laptop to verify the 28MB memory budget. No personal data leaves your machine.
+    </div>
+    <div style="display: flex; gap: 10px;">
+      <button class="btn-primary" style="padding: 7px 14px; font-size: 12.5px;" onclick="acceptCookies()">Accept Telemetry</button>
+      <button class="btn-secondary" style="padding: 7px 14px; font-size: 12.5px;" onclick="essentialCookiesOnly()">Essential Only</button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    BenNeta 1.0.0 &bull; MF Technologies &bull; Built with Rust, Python, PHP, and SQLite. Zero emojis. Strict execution.
+  </footer>
+
+  <!-- OS Detection & Interaction Logic -->
+  <script>
+    let currentDetectedOs = 'linux';
+
+    async function detectUserOS() {
+      const ua = navigator.userAgent || '';
+      let isWindows = /Windows|Win64|WOW64/i.test(ua);
+      let isLinux = /Linux|X11|Ubuntu|Debian/i.test(ua);
+      let isMac = /Macintosh|Mac OS X/i.test(ua);
+
+      // Try server detect_os API for authoritative verification
+      try {
+        const res = await fetch('/api.php?action=detect_os');
+        const data = await res.json();
+        if (data && data.status === 'SUCCESS') {
+          if (data.detected_os === 'windows') isWindows = true;
+          if (data.detected_os === 'linux') isLinux = true;
+        }
+      } catch (e) {}
+
+      const osTextEl = document.getElementById('detectedOsText');
+      const primaryBtn = document.getElementById('primaryDownloadBtn');
+      const primaryLabel = document.getElementById('primaryDownloadLabel');
+      const toggleEl = document.getElementById('secondaryOsToggle');
+      const terminalSnippet = document.getElementById('terminalSnippet');
+      const cardLinux = document.getElementById('cardLinux');
+      const cardWindows = document.getElementById('cardWindows');
+
+      if (isWindows) {
+        currentDetectedOs = 'windows';
+        osTextEl.innerHTML = 'Detected: <strong>Windows 10 / 11 (64-bit)</strong>';
+        primaryBtn.href = '/downloads/benneta_windows_x64.zip';
+        primaryLabel.textContent = 'Download BenNeta for Windows (.zip)';
+        toggleEl.textContent = 'Looking for Linux (.deb)? Click here to switch';
+        terminalSnippet.style.display = 'none';
+        cardWindows.classList.add('recommended');
+      } else {
+        currentDetectedOs = 'linux';
+        osTextEl.innerHTML = 'Detected: <strong>Linux (Ubuntu / Debian / Mint 64-bit)</strong>';
+        primaryBtn.href = '/downloads/benneta_1.0.0_amd64.deb';
+        primaryLabel.textContent = 'Download BenNeta for Linux (.deb)';
+        toggleEl.textContent = 'Looking for Windows 10/11? Click here to switch';
+        terminalSnippet.style.display = 'inline-flex';
+        cardLinux.classList.add('recommended');
+      }
+
+      fetchChecksums();
+      checkCookieConsent();
+    }
+
+    function toggleSecondaryOs() {
+      const primaryBtn = document.getElementById('primaryDownloadBtn');
+      const primaryLabel = document.getElementById('primaryDownloadLabel');
+      const toggleEl = document.getElementById('secondaryOsToggle');
+      const osTextEl = document.getElementById('detectedOsText');
+      const terminalSnippet = document.getElementById('terminalSnippet');
+
+      if (currentDetectedOs === 'linux') {
+        currentDetectedOs = 'windows';
+        osTextEl.innerHTML = 'Switched to: <strong>Windows (64-bit)</strong>';
+        primaryBtn.href = '/downloads/benneta_windows_x64.zip';
+        primaryLabel.textContent = 'Download BenNeta for Windows (.zip)';
+        toggleEl.textContent = 'Switch back to Linux (.deb)';
+        terminalSnippet.style.display = 'none';
+      } else {
+        currentDetectedOs = 'linux';
+        osTextEl.innerHTML = 'Switched to: <strong>Linux (Ubuntu / Debian / Mint)</strong>';
+        primaryBtn.href = '/downloads/benneta_1.0.0_amd64.deb';
+        primaryLabel.textContent = 'Download BenNeta for Linux (.deb)';
+        toggleEl.textContent = 'Switch back to Windows (.zip)';
+        terminalSnippet.style.display = 'inline-flex';
+      }
+    }
+
+    async function fetchChecksums() {
+      try {
+        const res = await fetch('/api.php?action=get_release_info');
+        const data = await res.json();
+        if (data && data.packages) {
+          if (data.packages.linux && data.packages.linux.sha256) {
+            document.getElementById('debSha').textContent = data.packages.linux.sha256;
+          }
+          if (data.packages.windows && data.packages.windows.sha256) {
+            document.getElementById('winSha').textContent = data.packages.windows.sha256;
+          }
+        }
+      } catch (e) {}
+    }
+
+    function copyTerminalCmd() {
+      const cmd = document.getElementById('terminalCmdText').textContent;
+      navigator.clipboard.writeText(cmd).then(() => {
+        const btn = document.getElementById('btnCopyCode');
+        btn.textContent = 'Copied!';
+        btn.style.color = '#10b981';
+        setTimeout(() => {
+          btn.textContent = 'Copy';
+          btn.style.color = '';
+        }, 2000);
+      });
+    }
+
+    function checkCookieConsent() {
+      const consent = getCookie('benneta_consent');
+      if (!consent || consent === 'pending') {
+        document.getElementById('cookieBanner').style.display = 'block';
+      }
+    }
+
+    function acceptCookies() {
+      setCookie('benneta_consent', 'accepted', 365);
+      document.getElementById('cookieBanner').style.display = 'none';
+      fetch('/api.php?action=save_preferences', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({cookie_consent: 'accepted'})
+      });
+    }
+
+    function essentialCookiesOnly() {
+      setCookie('benneta_consent', 'essential', 365);
+      document.getElementById('cookieBanner').style.display = 'none';
+      fetch('/api.php?action=save_preferences', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({cookie_consent: 'essential'})
+      });
+    }
+
+    function setCookie(name, value, days) {
+      let expires = '';
+      if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = '; expires=' + date.toUTCString();
+      }
+      document.cookie = name + '=' + (value || '') + expires + '; path=/; SameSite=Lax';
+    }
+
+    function getCookie(name) {
+      const nameEQ = name + '=';
+      const ca = document.cookie.split(';');
+      for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+      }
+      return null;
+    }
+
+    window.addEventListener('DOMContentLoaded', detectUserOS);
+  </script>
+</body>
+</html>

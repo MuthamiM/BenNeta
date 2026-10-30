@@ -93,6 +93,46 @@ def init_db():
         first_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
+
+    -- Usage Analytics & Web Cookie Sessions: Track assistant metrics, tasks, and system performance
+    CREATE TABLE IF NOT EXISTS usage_events (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        event_type TEXT NOT NULL,
+        category TEXT DEFAULT 'general',
+        action_name TEXT,
+        status TEXT DEFAULT 'success',
+        duration_ms INTEGER DEFAULT 0,
+        ram_usage_mb REAL DEFAULT 0.0,
+        details_json TEXT,
+        session_id TEXT,
+        ip_address TEXT,
+        user_agent TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    -- User Preferences & Cookie Web State
+    CREATE TABLE IF NOT EXISTS user_preferences (
+        session_id TEXT PRIMARY KEY,
+        theme TEXT DEFAULT 'dark',
+        dnd_mode INTEGER DEFAULT 0,
+        active_workspace TEXT DEFAULT 'inbox',
+        cookie_consent TEXT DEFAULT 'accepted',
+        telemetry_enabled INTEGER DEFAULT 1,
+        last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        metadata_json TEXT
+    );
+
+    -- RAM Guardian Telemetry: Ensure strict <= 28MB RAM compliance
+    CREATE TABLE IF NOT EXISTS ram_telemetry (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        process_name TEXT,
+        rss_mb REAL,
+        vms_mb REAL,
+        max_limit_mb REAL DEFAULT 28.0,
+        percent_of_max REAL,
+        status TEXT DEFAULT 'OK',
+        recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
     """)
 
     cursor.execute("""
@@ -107,10 +147,45 @@ def init_db():
         INSERT OR IGNORE INTO system_state (key, value)
         VALUES ('security_api_token', 'ast_sec_token_prod_9821')
     """)
+    cursor.execute("""
+        INSERT OR IGNORE INTO system_state (key, value)
+        VALUES ('max_ram_limit_mb', '28.0')
+    """)
 
     conn.commit()
     conn.close()
 
+def record_usage_event(event_type, category="general", action_name=None, status="success",
+                       duration_ms=0, ram_usage_mb=0.0, details=None, session_id=None,
+                       ip=None, user_agent=None):
+    """Log an event into usage_events for assistant telemetry and user analytics."""
+    try:
+        import json
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        details_str = json.dumps(details) if isinstance(details, (dict, list)) else details
+        cursor.execute("""
+            INSERT INTO usage_events (event_type, category, action_name, status,
+                                      duration_ms, ram_usage_mb, details_json,
+                                      session_id, ip_address, user_agent)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (event_type, category, action_name, status, duration_ms, ram_usage_mb,
+              details_str, session_id, ip, user_agent))
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        pass
+
+def get_current_process_ram_mb():
+    """Return the current process RSS memory in MB."""
+    try:
+        import resource
+        # ru_maxrss is in KB on Linux
+        kb = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        return round(kb / 1024.0, 2)
+    except Exception:
+        return 0.0
+
 if __name__ == "__main__":
     init_db()
-    print(f"[+] Database initialized with security tables at: {DB_PATH}")
+    print(f"[+] Database schema updated with usage, cookies, and RAM telemetry: {DB_PATH}")

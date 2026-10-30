@@ -40,5 +40,13 @@
         "poll_interval_seconds": 60,
         "sync_todo_txt": true,
         "todo_txt_path": "~/todo.txt"
+    },
+    "brave_search": {
+        "api_key": "YOUR_BRAVE_SEARCH_API_KEY",
+        "enabled": true
+    },
+    "watched_emails": {
+        "senders": [],
+        "keywords": ["urgent", "contract", "proposal", "invoice", "meeting", "api", "security"]
     }
 }

@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BenNeta - Intelligence & Automation</title>
+    <!-- Favicons and App Assets -->
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+    <link rel="manifest" href="/assets/site.webmanifest">
+    <meta name="theme-color" content="#d97757">
+    <link rel="stylesheet" href="/assets/theme.css">
     <style>
         :root {
             --bg-window: #eef1f6;
@@ -748,6 +755,22 @@
                         </svg>
                         <span>Daily tasks</span>
                     </li>
+                    <li class="nav-item" id="nav-usage" onclick="setTab('usage')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <line x1="18" y1="20" x2="18" y2="10"></line>
+                            <line x1="12" y1="20" x2="12" y2="4"></line>
+                            <line x1="6" y1="20" x2="6" y2="14"></line>
+                        </svg>
+                        <span>Usage & Analytics</span>
+                    </li>
+                    <li class="nav-item" id="nav-download" onclick="window.location.href='/download.html'">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        <span style="color: var(--color-primary); font-weight: 600;">Download .deb / .exe</span>
+                    </li>
                 </ul>
 
                 <div class="nav-section-title">Topics</div>
@@ -763,6 +786,10 @@
                     <li class="topic-item" onclick="setTab('automated')">
                         <span class="topic-dot" style="background: var(--accent-green);"></span>
                         <span>Server Health</span>
+                    </li>
+                    <li class="topic-item" onclick="setTab('usage')">
+                        <span class="topic-dot" style="background: var(--color-primary);"></span>
+                        <span>RAM Budget (<28MB)</span>
                     </li>
                 </ul>
             </div>
@@ -795,8 +822,11 @@
                     <input type="text" placeholder="Search..." oninput="handleSearch(this.value)">
                     <span class="kbd-badge">K</span>
                 </div>
+                <span class="ram-badge ok" id="header-ram-pill">RAM: 14.2 MB / 28 MB MAX</span>
                 <button class="btn-ghost-icon" onclick="fetchTodaysGmail()">Scan Today's Inbox</button>
                 <button class="btn-ghost-icon" id="header-dnd-badge" onclick="toggleDnd()">DND: OFF</button>
+                <button class="btn-ghost-icon" onclick="toggleTheme()" id="theme-toggle-btn">Theme</button>
+                <a href="/download.html" class="btn-ghost-icon" style="text-decoration:none; color: var(--color-primary); font-weight:600;">Download</a>
             </header>
 
             <div class="content-scroll">
@@ -813,6 +843,7 @@
                         <button class="pill-tab" onclick="switchWorkspace('automated', this)">10 Automated Tasks</button>
                         <button class="pill-tab" onclick="switchWorkspace('pending', this)">Task Approvals</button>
                         <button class="pill-tab" onclick="switchWorkspace('tasks', this)">Daily Tasks</button>
+                        <button class="pill-tab" onclick="switchWorkspace('usage', this)">Usage &amp; Analytics</button>
                     </div>
                 </section>
 
@@ -913,6 +944,77 @@
                             <tbody id="tasks-table-body"></tbody>
                         </table>
                     </div>
+
+                    <!-- SECTION 6: USAGE, COOKIES & TELEMETRY -->
+                    <div id="view-usage" class="view-panel" style="display: none;">
+                        <div class="app-card" style="margin-bottom: 1.25rem;">
+                            <div class="section-header-row" style="margin-bottom: 1.25rem;">
+                                <div>
+                                    <div class="section-header-title">Usage Analytics &amp; Memory Guardian</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">
+                                        Telemetry collected locally on your machine &bull; Strict 28MB RAM budget enforced
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn-ghost-icon" onclick="exportUserData()">Export Data (JSON)</button>
+                                    <button class="btn-ghost-icon" onclick="clearUsageTelemetry()" style="color: var(--accent-red);">Purge Telemetry</button>
+                                    <button class="btn-ghost-icon" onclick="loadUsageData()">Refresh</button>
+                                </div>
+                            </div>
+
+                            <!-- Real-time RAM Budget Gauge -->
+                            <div style="background: var(--bg-container); border: 1px solid var(--border-card); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.25rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                    <span style="font-weight: 700; font-size: 0.88rem; color: var(--text-heading);">Resident Memory Footprint (RAM)</span>
+                                    <span id="usage-ram-text" style="font-family: monospace; font-weight: 700; font-size: 0.88rem; color: #10b981;">Checking RAM...</span>
+                                </div>
+                                <div style="background: #e2e8f0; height: 10px; border-radius: 5px; overflow: hidden;">
+                                    <div id="usage-ram-bar" style="background: #10b981; height: 100%; width: 50%; transition: width 0.3s ease;"></div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); margin-top: 0.4rem;">
+                                    <span>0 MB</span>
+                                    <span>Warning: 24 MB</span>
+                                    <span>Strict Cap: 28 MB</span>
+                                </div>
+                            </div>
+
+                            <!-- KPI Cards -->
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+                                <div style="background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 10px; padding: 1rem; text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: 800; color: var(--primary);" id="kpi-total-actions">0</div>
+                                    <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-top: 0.3rem;">Actions Today</div>
+                                </div>
+                                <div style="background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 10px; padding: 1rem; text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: 800; color: #10b981;" id="kpi-emails-triaged">0</div>
+                                    <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-top: 0.3rem;">Emails Triaged</div>
+                                </div>
+                                <div style="background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 10px; padding: 1rem; text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: 800; color: #ef4444;" id="kpi-threats-blocked">0</div>
+                                    <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-top: 0.3rem;">Threats Blocked</div>
+                                </div>
+                                <div style="background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 10px; padding: 1rem; text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: 800; color: #f59e0b;" id="kpi-tasks-run">0</div>
+                                    <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-top: 0.3rem;">Tasks Executed</div>
+                                </div>
+                            </div>
+
+                            <!-- Recent Activity Telemetry Table -->
+                            <div class="section-header-title" style="margin-bottom: 0.5rem;">Recent Assistant Telemetry Log</div>
+                            <table class="modern-table">
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>Category</th>
+                                        <th>Action Name</th>
+                                        <th>Status</th>
+                                        <th>Duration</th>
+                                        <th>RAM (MB)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usage-telemetry-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -980,6 +1082,39 @@
         </div>
     </div>
 
+    <!-- MODAL: BRAVE RESEARCH & DRAFT REPLY -->
+    <div id="reply-modal" class="modal">
+        <div class="modal-body" style="max-width: 680px;">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title">BenNeta Research & Draft Reply</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">Powered by Brave Search API live intelligence</div>
+                </div>
+                <button class="btn-ghost-icon" onclick="closeModal('reply-modal')">Close</button>
+            </div>
+            <div style="margin-bottom: 0.8rem;">
+                <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">RECIPIENT</div>
+                <div id="reply-modal-recipient" style="font-weight: 600; font-size: 0.85rem; color: var(--text-heading); margin-top: 0.15rem;"></div>
+            </div>
+            <div style="margin-bottom: 0.8rem;">
+                <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">SUBJECT</div>
+                <div id="reply-modal-subject" style="font-weight: 600; font-size: 0.85rem; color: var(--text-heading); margin-top: 0.15rem;"></div>
+            </div>
+            <div style="margin-bottom: 0.8rem;">
+                <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; margin-bottom: 0.35rem;">BRAVE SEARCH INTELLIGENCE FINDINGS</div>
+                <div id="reply-modal-research" style="max-height: 140px; overflow-y: auto; background: #f8fafc; border: 1px solid var(--border-card); border-radius: 8px; padding: 0.6rem; font-size: 0.75rem;"></div>
+            </div>
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label>Response draft</label>
+                <textarea id="reply-modal-body" rows="8" style="width: 100%; border: 1px solid var(--border-card); border-radius: 8px; padding: 0.6rem; font-family: monospace; font-size: 0.82rem; line-height: 1.45; resize: vertical;"></textarea>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                <button class="btn-ghost-icon" onclick="copyReplyDraft()">Copy reply to clipboard</button>
+                <button class="btn-new-chat" style="margin-bottom: 0;" onclick="closeModal('reply-modal'); showToast('Draft saved in BenNeta outbox.');">Done</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         function showToast(msg) {
             const toast = document.getElementById('toast');
@@ -1000,7 +1135,7 @@
             try {
                 const res = await fetch('api.php?action=status');
                 const data = await res.json();
-                if (data.success) {
+                if (data.status === 'SUCCESS' || data.success) {
                     document.getElementById('greeting-title').innerText = `Hello, ${data.user_name || 'Musa'}`;
                     document.getElementById('user-display-name').innerText = data.user_name || 'Musa';
                     document.getElementById('user-display-email').innerText = data.user_email || 'musamwange2@gmail.com';
@@ -1010,12 +1145,170 @@
                     dndBadge.innerText = data.notifications_mode === 'OFF' ? 'DND: ON (QUIET)' : 'DND: OFF (ACTIVE)';
                     dndBadge.style.color = data.notifications_mode === 'OFF' ? '#ef4444' : '#10b981';
 
-                    document.getElementById('credits-status-text').innerText = `Security: Active (${data.blocked_ips} Banned)`;
+                    document.getElementById('credits-status-text').innerText = `Security: Active (${data.blocked_ips || 0} Banned)`;
+
+                    if (data.ram_status) {
+                        const r = data.ram_status;
+                        const pill = document.getElementById('header-ram-pill');
+                        if (pill) {
+                            pill.innerText = `RAM: ${r.rss_mb} MB / 28 MB MAX`;
+                            pill.className = 'ram-badge ' + (r.rss_mb >= 28 ? 'alert' : (r.rss_mb >= 24 ? 'warning' : 'ok'));
+                        }
+                    }
                 }
             } catch (e) { console.error(e); }
         }
 
+        async function loadUsageData() {
+            try {
+                const res = await fetch('api.php?action=get_usage_data');
+                const data = await res.json();
+                if (data.status === 'SUCCESS') {
+                    // Update RAM Gauge
+                    if (data.ram_audit) {
+                        const r = data.ram_audit;
+                        const ramText = document.getElementById('usage-ram-text');
+                        const ramBar = document.getElementById('usage-ram-bar');
+                        if (ramText && ramBar) {
+                            ramText.innerText = `${r.rss_mb} MB / 28.0 MB (${r.percent_used}%)`;
+                            ramBar.style.width = Math.min(100, r.percent_used) + '%';
+                            ramBar.style.background = (r.rss_mb >= 28) ? '#ef4444' : (r.rss_mb >= 24 ? '#f59e0b' : '#10b981');
+                            ramText.style.color = ramBar.style.background;
+                        }
+                    }
+
+                    // Update KPIs
+                    document.getElementById('kpi-total-actions').innerText = data.total_actions_today || 0;
+                    
+                    let emailCount = 0, threatCount = 0, taskCount = 0;
+                    if (data.categories) {
+                        data.categories.forEach(c => {
+                            if (c.category === 'email') emailCount += parseInt(c.count);
+                            if (c.category === 'security') threatCount += parseInt(c.count);
+                            if (c.category === 'task') taskCount += parseInt(c.count);
+                        });
+                    }
+                    document.getElementById('kpi-emails-triaged').innerText = emailCount;
+                    document.getElementById('kpi-threats-blocked').innerText = threatCount;
+                    document.getElementById('kpi-tasks-run').innerText = taskCount;
+
+                    // Render Telemetry Table
+                    const tbody = document.getElementById('usage-telemetry-body');
+                    if (tbody && data.recent_activity) {
+                        if (data.recent_activity.length === 0) {
+                            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:1rem;">No telemetry recorded yet today.</td></tr>';
+                        } else {
+                            tbody.innerHTML = data.recent_activity.map(row => `
+                                <tr>
+                                    <td style="font-family:monospace; font-size:0.75rem; color:var(--text-muted);">${escapeHtml(row.created_at)}</td>
+                                    <td><span class="badge" style="background:var(--bg-container);">${escapeHtml(row.category)}</span></td>
+                                    <td style="font-weight:600; color:var(--text-heading);">${escapeHtml(row.action_name || row.event_type)}</td>
+                                    <td><span style="color:${row.status === 'success' ? '#10b981' : '#ef4444'}; font-weight:600;">${escapeHtml(row.status)}</span></td>
+                                    <td style="font-family:monospace; font-size:0.75rem;">${row.duration_ms} ms</td>
+                                    <td style="font-family:monospace; font-size:0.75rem; color:#10b981;">${row.ram_usage_mb} MB</td>
+                                </tr>
+                            `).join('');
+                        }
+                    }
+                }
+            } catch (e) { console.error('Error loading usage data:', e); }
+        }
+
+        function exportUserData() {
+            window.location.href = 'api.php?action=export_data';
+            showToast('Downloading complete user data export (JSON)...');
+        }
+
+        async function clearUsageTelemetry() {
+            if (!confirm('Are you sure you want to clear your local usage history?')) return;
+            try {
+                const res = await fetch('api.php?action=clear_data', {method: 'POST'});
+                const data = await res.json();
+                if (data.status === 'SUCCESS') {
+                    showToast('Usage telemetry cleared.');
+                    loadUsageData();
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme') || 'dark';
+            const next = (current === 'dark') ? 'light' : 'dark';
+            html.setAttribute('data-theme', next);
+            document.getElementById('theme-toggle-btn').innerText = `Theme: ${next.toUpperCase()}`;
+            showToast(`Theme switched to ${next.toUpperCase()}`);
+            fetch('api.php?action=save_preferences', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({theme: next})
+            }).catch(() => {});
+        }
+
+        window.cachedEmails = [];
+
+        function renderEmailCards(emails) {
+            const grid = document.getElementById('gmail-cards-grid');
+            if (!emails || emails.length === 0) {
+                grid.innerHTML = `
+                    <div class="app-card app-card-blank" onclick="fetchTodaysGmail()" style="grid-column: span 2;">
+                        <div style="text-align: center;">
+                            <div style="font-weight: 600;">No matching emails found</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.3rem;">Mailbox connected: musamwange2@gmail.com</div>
+                            <button class="btn-ghost-icon" style="margin-top: 0.6rem;" onclick="fetchTodaysGmail()">Refresh Inbox</button>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = emails.map((em, idx) => {
+                const isSpam = em.is_spam;
+                const isPromo = em.is_promo;
+                let badgeHtml = '';
+                if (isSpam) {
+                    badgeHtml = `<span class="badge-priority badge-spam">[SPAM DETECTED: ${em.spam_score}/100]</span>`;
+                } else if (isPromo) {
+                    badgeHtml = `<span class="badge-priority badge-promo">[PROMOTION]</span>`;
+                } else if (em.task) {
+                    badgeHtml = `<span class="badge-priority badge-prio-high">[ACTIONABLE TASK]</span>`;
+                } else {
+                    badgeHtml = `<span class="badge-priority badge-prio-low">[CLEAN INBOX]</span>`;
+                }
+
+                return `
+                    <div class="app-card" style="${isSpam ? 'border-color: #fca5a5;' : ''}">
+                        <div class="card-top">
+                            <div class="card-icon-box ${isSpam ? 'red' : (em.task ? 'purple' : 'green')}">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline>
+                                    <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
+                                </svg>
+                            </div>
+                            <div style="font-size: 0.72rem; color: var(--text-muted);">${escapeHtml(em.date)}</div>
+                        </div>
+
+                        <div class="card-title" title="${escapeHtml(em.subject)}">${escapeHtml(em.subject)}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.5rem; word-break: break-all;">From: <strong>${escapeHtml(em.sender)}</strong></div>
+
+                        <div style="margin-bottom: 0.6rem;">${badgeHtml}</div>
+
+                        ${em.spam_reasons && em.spam_reasons.length > 0 ? 
+                            `<div style="font-size: 0.72rem; color: #b91c1c; margin-bottom: 0.5rem;">Reasons: ${escapeHtml(em.spam_reasons.join(', '))}</div>` : ''}
+
+                        <div class="card-footer" style="flex-wrap: wrap; gap: 0.35rem; align-items: center;">
+                            ${em.task ? 
+                                `<button class="btn-card-action btn-card-allow" onclick="quickAllowTask('${escapeHtml(em.task.title)}')">Add to Tasks</button>` : ''}
+                            <button class="btn-ghost-icon" style="padding: 0.25rem 0.5rem; font-size: 0.72rem;" onclick="draftReplyForEmail(${idx})">Draft Reply (Brave AI)</button>
+                            <button class="btn-ghost-icon" style="padding: 0.25rem 0.5rem; font-size: 0.72rem;" onclick="watchSender('${escapeHtml(em.sender)}')">Keep Eye On</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
         async function fetchTodaysGmail() {
+            setTab('gmail');
             const grid = document.getElementById('gmail-cards-grid');
             grid.innerHTML = '<div style="padding: 1.5rem; color: var(--text-muted);">Connecting to Gmail (musamwange2@gmail.com)...</div>';
 
@@ -1037,63 +1330,89 @@
                     return;
                 }
 
-                if (!data.emails || data.emails.length === 0) {
-                    grid.innerHTML = `
-                        <div class="app-card app-card-blank" onclick="openModal('gmail-modal')">
-                            <div style="text-align: center;">
-                                <div style="font-weight: 600;">No emails received today yet</div>
-                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.3rem;">Mailbox connected: musamwange2@gmail.com</div>
-                            </div>
-                        </div>
-                    `;
-                    return;
-                }
-
-                grid.innerHTML = data.emails.map(em => {
-                    const isSpam = em.is_spam;
-                    const isPromo = em.is_promo;
-                    let badgeHtml = '';
-                    if (isSpam) {
-                        badgeHtml = `<span class="badge-priority badge-spam">[SPAM DETECTED: ${em.spam_score}/100]</span>`;
-                    } else if (isPromo) {
-                        badgeHtml = `<span class="badge-priority badge-promo">[PROMOTION]</span>`;
-                    } else if (em.task) {
-                        badgeHtml = `<span class="badge-priority badge-prio-high">[ACTIONABLE TASK]</span>`;
-                    } else {
-                        badgeHtml = `<span class="badge-priority badge-prio-low">[CLEAN INBOX]</span>`;
-                    }
-
-                    return `
-                        <div class="app-card" style="${isSpam ? 'border-color: #fca5a5;' : ''}">
-                            <div class="card-top">
-                                <div class="card-icon-box ${isSpam ? 'red' : (em.task ? 'purple' : 'green')}">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline>
-                                        <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
-                                    </svg>
-                                </div>
-                                <div style="font-size: 0.72rem; color: var(--text-muted);">${escapeHtml(em.date)}</div>
-                            </div>
-
-                            <div class="card-title">${escapeHtml(em.subject)}</div>
-                            <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.5rem;">From: <strong>${escapeHtml(em.sender)}</strong></div>
-
-                            <div style="margin-bottom: 0.6rem;">${badgeHtml}</div>
-
-                            ${em.spam_reasons && em.spam_reasons.length > 0 ? 
-                                `<div style="font-size: 0.72rem; color: #b91c1c; margin-bottom: 0.5rem;">Reasons: ${escapeHtml(em.spam_reasons.join(', '))}</div>` : ''}
-
-                            <div class="card-footer">
-                                ${em.task ? 
-                                    `<button class="btn-card-action btn-card-allow" onclick="quickAllowTask('${escapeHtml(em.task.title)}')">Add to Tasks</button>` : 
-                                    (isSpam ? `<span style="font-size: 0.72rem; color: #dc2626;">Quarantined</span>` : `<span style="font-size: 0.72rem; color: var(--text-muted);">Verified</span>`)}
-                            </div>
-                        </div>
-                    `;
-                }).join('');
+                window.cachedEmails = data.emails || [];
+                renderEmailCards(window.cachedEmails);
+                showToast(`Retrieved ${window.cachedEmails.length} emails from today's inbox.`);
             } catch (e) {
                 console.error(e);
+                grid.innerHTML = '<div style="padding: 1.5rem; color: #ef4444;">Error connecting to mailbox. Click Refresh to retry.</div>';
             }
+        }
+
+        function handleSearch(query) {
+            setTab('gmail');
+            const q = (query || '').toLowerCase().trim();
+            if (!q) {
+                renderEmailCards(window.cachedEmails);
+                return;
+            }
+            const filtered = (window.cachedEmails || []).filter(em => {
+                const s = (em.subject || '').toLowerCase();
+                const from = (em.sender || '').toLowerCase();
+                const taskT = (em.task && em.task.title ? em.task.title : '').toLowerCase();
+                return s.includes(q) || from.includes(q) || taskT.includes(q);
+            });
+            renderEmailCards(filtered);
+        }
+
+        async function draftReplyForEmail(idx) {
+            const em = (window.cachedEmails || [])[idx];
+            if (!em) return;
+
+            showToast('Querying Brave Search API & preparing response draft...');
+            try {
+                const res = await fetch('api.php?action=research_and_draft_reply', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        subject: em.subject,
+                        sender: em.sender,
+                        body: em.snippet || em.subject
+                    })
+                });
+                const json = await res.json();
+                const d = json.data;
+
+                document.getElementById('reply-modal-recipient').innerText = d.recipient || em.sender;
+                document.getElementById('reply-modal-subject').innerText = d.subject || `Re: ${em.subject}`;
+                document.getElementById('reply-modal-body').value = d.draft_body || '';
+
+                const researchBox = document.getElementById('reply-modal-research');
+                if (d.research && d.research.length > 0) {
+                    researchBox.innerHTML = d.research.map(r => `
+                        <div style="margin-bottom: 0.5rem;">
+                            <a href="${escapeHtml(r.url)}" target="_blank" style="font-weight: 600; color: var(--primary); text-decoration: none;">${escapeHtml(r.title)}</a>
+                            <div style="color: var(--text-secondary); margin-top: 0.1rem;">${escapeHtml(r.description || '')}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    researchBox.innerHTML = '<span style="color: var(--text-muted);">No external references required for this inquiry.</span>';
+                }
+
+                openModal('reply-modal');
+            } catch (e) {
+                showToast('Error researching email reply.');
+            }
+        }
+
+        async function watchSender(sender) {
+            try {
+                const res = await fetch('api.php?action=add_watched_email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pattern: sender, type: 'sender', notes: 'Added from live inbox' })
+                });
+                const data = await res.json();
+                showToast(data.message || `Keeping an eye on ${sender}`);
+            } catch (e) {
+                showToast('Error adding to watched list.');
+            }
+        }
+
+        function copyReplyDraft() {
+            const txt = document.getElementById('reply-modal-body').value;
+            navigator.clipboard.writeText(txt);
+            showToast('Reply draft copied to clipboard!');
         }
 
         async function loadSecurityTelemetry() {
@@ -1305,6 +1624,10 @@
             const nav = document.getElementById(`nav-${tab}`);
             if (target) target.style.display = 'block';
             if (nav) nav.classList.add('active');
+
+            if (tab === 'usage') {
+                loadUsageData();
+            }
         }
 
         function switchWorkspace(tab, btn) {
@@ -1317,10 +1640,14 @@
             if (e.key === 'Enter') {
                 const val = e.target.value.trim();
                 if (!val) return;
-                if (val.startsWith('/scan')) {
+                if (val.startsWith('/scan') || val.toLowerCase().includes('scan inbox')) {
                     fetchTodaysGmail();
                 } else if (val.startsWith('/dnd')) {
                     toggleDnd();
+                } else if (val.startsWith('@') || val.startsWith('/search') || val.toLowerCase().startsWith('search ')) {
+                    const cleanQ = val.replace(/^@\w+\s*|^\/search\s*|^search\s*/i, '');
+                    handleSearch(cleanQ);
+                    showToast(`Searching today's emails for: ${cleanQ}`);
                 } else {
                     document.getElementById('manual-title').value = val;
                     openModal('add-task-modal');

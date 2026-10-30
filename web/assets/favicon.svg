@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="favTerracotta" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e08264" />
+      <stop offset="100%" stop-color="#c46344" />
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="7" fill="#14171f"/>
+  <g transform="translate(16, 16)">
+    <line x1="0" y1="-10" x2="0" y2="10" stroke="url(#favTerracotta)" stroke-width="2.8" stroke-linecap="round"/>
+    <line x1="-10" y1="0" x2="10" y2="0" stroke="url(#favTerracotta)" stroke-width="2.8" stroke-linecap="round"/>
+    <line x1="-7" y1="-7" x2="7" y2="7" stroke="url(#favTerracotta)" stroke-width="2.8" stroke-linecap="round"/>
+    <line x1="-7" y1="7" x2="7" y2="-7" stroke="url(#favTerracotta)" stroke-width="2.8" stroke-linecap="round"/>
+    <circle cx="0" cy="0" r="1.8" fill="#ffffff" />
+  </g>
+</svg>
