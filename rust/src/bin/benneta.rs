@@ -47,36 +47,10 @@ fn main() {
 
     match cmd {
         "web" | "ui" | "start" => {
-            let web_dir = root.join("web");
-            let port = "8765";
-            let url = format!("http://localhost:{}", port);
+            let url = "http://benneta.mftechnologies.org";
 
-            println!("[*] Starting BenNeta Web Microservice on {}...", url);
-            println!("[*] Enforcing low-memory profile: memory_limit=20M");
-
-            open_browser(&url);
-
-            // Launch PHP server with strict low-memory limit (20M limit to stay well within 28MB)
-            let mut server = Command::new("php")
-                .arg("-d")
-                .arg("memory_limit=20M")
-                .arg("-S")
-                .arg(format!("0.0.0.0:{}", port))
-                .arg("-t")
-                .arg(&web_dir)
-                .current_dir(&root)
-                .spawn();
-
-            match server {
-                Ok(ref mut child) => {
-                    println!("[+] BenNeta running. Press Ctrl+C to stop.");
-                    let _ = child.wait();
-                }
-                Err(e) => {
-                    eprintln!("[-] Error launching web server: {}", e);
-                    eprintln!("[-] Ensure php-cli is installed and on PATH.");
-                }
-            }
+            println!("[*] Opening BenNeta Intelligence Dashboard at {}...", url);
+            open_browser(url);
         }
         "status" => {
             println!("[*] Root directory: {}", root.display());
