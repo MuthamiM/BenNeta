@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 set -e
 
-DOMAIN="${BENNETA_DOMAIN:-mftechnologies.org}"
+DOMAIN="${BENNETA_DOMAIN:-benneta.mftechnologies.org}"
 
 # Initialize config if not present
 if [ ! -f /app/config/config.json ]; then
@@ -13,9 +13,9 @@ if [ ! -f /app/data/assistant.db ]; then
     python3 /app/python/db.py 2>/dev/null || true
 fi
 
-echo "[*] BenNeta Microservices Container — Production"
-echo "[*] Domain: ${DOMAIN}"
-echo "[*] Memory: Strict Max 28MB RAM"
+echo "[*] BenNeta Microservices Container — Subdomain Mode"
+echo "[*] Subdomain: ${DOMAIN}"
+echo "[*] Memory: Strict Max 28MB RAM Enforced"
 echo "[*] Routes:"
 echo "[*]   Landing Page & Downloads: https://${DOMAIN}/"
 echo "[*]   Assistant Dashboard:      https://${DOMAIN}/app"

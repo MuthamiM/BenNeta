@@ -1,13 +1,12 @@
-# BenNeta Production Stack for mftechnologies.org
-# Usage: docker compose up -d
-
+# BenNeta Production Stack for benneta.mftechnologies.org
+# Subdomain-isolated deployment alongside mftechnologies.org company apps
 services:
   benneta:
     build: .
     container_name: benneta
     restart: unless-stopped
     environment:
-      - BENNETA_DOMAIN=mftechnologies.org
+      - BENNETA_DOMAIN=benneta.mftechnologies.org
     ports:
       - "8765:8765"
     volumes:
