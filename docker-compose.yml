@@ -1,0 +1,36 @@
+# BenNeta Production Stack for mftechnologies.org
+# Usage: docker compose up -d
+
+services:
+  benneta:
+    build: .
+    container_name: benneta
+    restart: unless-stopped
+    environment:
+      - BENNETA_DOMAIN=mftechnologies.org
+    ports:
+      - "8765:8765"
+    volumes:
+      - benneta_data:/app/data
+      - benneta_config:/app/config
+    deploy:
+      resources:
+        limits:
+          memory: 28M
+        reservations:
+          memory: 8M
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://127.0.0.1:8765/api.php?action=status"]
+      interval: 20s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+volumes:
+  benneta_data:
+  benneta_config:

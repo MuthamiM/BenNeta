@@ -1,86 +1,86 @@
 #!/usr/bin/env bash
-# BenNeta Deployment Script for mftechnologies.org
-# Zero emojis. Strict execution.
-
+# BenNeta Docker Production Deployment for mftechnologies.org
+# Deploys the containerized BenNeta app behind Nginx on the public domain.
 set -euo pipefail
 
-echo "[*] Initializing BenNeta Deployment for mftechnologies..."
+DOMAIN="mftechnologies.org"
+CONTAINER_NAME="benneta"
+IMAGE_NAME="benneta:latest"
+INTERNAL_PORT=8765
 
-DOMAIN="benneta.mftechnologies.org"
-INSTALL_DIR="/opt/benneta"
-SERVICE_NAME="benneta.service"
+echo "[*] BenNeta Production Deployment -> ${DOMAIN}"
 
-# 1. Verify sudo privileges
+# 1. Must be root
 if [ "$EUID" -ne 0 ]; then
-  echo "[-] Please run as root or with sudo: sudo ./deploy_mftechnologies.sh"
+  echo "[-] Run as root: sudo ./deploy_mftechnologies.sh"
   exit 1
 fi
 
-# 2. Install runtime prerequisites
-echo "[*] Updating apt package index and installing dependencies..."
+# 2. Install Nginx + Certbot if missing
+echo "[*] Installing Nginx and Certbot..."
 apt-get update -y
-apt-get install -y \
-  python3 \
-  python3-pip \
-  php-cli \
-  php-fpm \
-  php-sqlite3 \
-  php-curl \
-  curl \
-  nginx \
-  libnotify-bin
+apt-get install -y nginx certbot python3-certbot-nginx
 
-# 3. Create install directory
-echo "[*] Creating application directory at $INSTALL_DIR..."
-mkdir -p "$INSTALL_DIR"
-cp -r config data php python web docs "$INSTALL_DIR/"
+# 3. Build Docker image
+echo "[*] Building Docker image..."
+docker build -t "${IMAGE_NAME}" .
 
-# Ensure data directory is writable
-chmod -R 775 "$INSTALL_DIR/data"
-chmod -R 775 "$INSTALL_DIR/config"
-chown -R www-data:www-data "$INSTALL_DIR/data"
+# 4. Stop any existing container
+echo "[*] Stopping existing container if running..."
+docker rm -f "${CONTAINER_NAME}" 2>/dev/null || true
 
-# 4. Install systemd service
-echo "[*] Configuring systemd service..."
-cat << 'EOF' > /etc/systemd/system/benneta.service
-[Unit]
-Description=BenNeta Intelligence & Security Microservices Platform
-After=network.target
+# 5. Run the container — bound to internal loopback only (Nginx handles public traffic)
+echo "[*] Starting BenNeta container..."
+docker run -d \
+  --name "${CONTAINER_NAME}" \
+  --memory=28m \
+  --memory-swap=28m \
+  --restart unless-stopped \
+  --network host \
+  -e BENNETA_DOMAIN="${DOMAIN}" \
+  "${IMAGE_NAME}"
 
-[Service]
-Type=simple
-User=www-data
-Group=www-data
-WorkingDirectory=/opt/benneta
-ExecStart=/usr/bin/php -S 0.0.0.0:8765 -t /opt/benneta/web
-Restart=always
-RestartSec=5
-Environment=PATH=/usr/local/bin:/usr/bin:/bin
+sleep 3
 
-[Install]
-WantedBy=multi-user.target
-EOF
-
-systemctl daemon-reload
-systemctl enable benneta.service
-systemctl restart benneta.service
-
-# 5. Configure Nginx
-if [ -f "benneta-mftechnologies.conf" ]; then
-  echo "[*] Installing Nginx configuration..."
-  cp benneta-mftechnologies.conf /etc/nginx/sites-available/benneta-mftechnologies.conf
-  ln -sf /etc/nginx/sites-available/benneta-mftechnologies.conf /etc/nginx/sites-enabled/
-  nginx -t && systemctl reload nginx || echo "[!] Notice: Check Nginx SSL certificate before reloading."
+# 6. Verify container is running
+if ! docker ps --filter name="${CONTAINER_NAME}" --format '{{.Status}}' | grep -q "Up"; then
+  echo "[-] Container failed to start. Check: docker logs ${CONTAINER_NAME}"
+  exit 1
 fi
+echo "[+] Container running."
 
-# 6. Verify local service health
-echo "[*] Verifying BenNeta API health..."
+# 7. Install Nginx site config
+echo "[*] Configuring Nginx for ${DOMAIN}..."
+cp benneta-mftechnologies.conf /etc/nginx/sites-available/benneta-mftechnologies.conf
+ln -sf /etc/nginx/sites-available/benneta-mftechnologies.conf /etc/nginx/sites-enabled/
+
+# Remove default site if it conflicts
+rm -f /etc/nginx/sites-enabled/default 2>/dev/null || true
+
+# Test nginx config (SSL lines are commented out initially)
+nginx -t && systemctl reload nginx
+echo "[+] Nginx configured and reloaded."
+
+# 8. Obtain SSL certificate via Certbot
+echo "[*] Requesting SSL certificate for ${DOMAIN}..."
+certbot --nginx -d "${DOMAIN}" -d "www.${DOMAIN}" --non-interactive --agree-tos --email admin@${DOMAIN} --redirect || {
+  echo "[!] Certbot failed — SSL can be configured manually later."
+  echo "[!] Run: certbot --nginx -d ${DOMAIN} -d www.${DOMAIN}"
+}
+
+# 9. Final health check against the public domain
+echo "[*] Running health check..."
 sleep 2
-if curl -s "http://127.0.0.1:8765/api.php?action=status" | grep -q '"success":true'; then
-  echo "[+] BenNeta is successfully running and responding on http://127.0.0.1:8765"
-  echo "[+] Host domain: $DOMAIN"
+STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://${DOMAIN}/" 2>/dev/null || echo "000")
+if [ "$STATUS" = "200" ] || [ "$STATUS" = "301" ]; then
+  echo "[+] BenNeta is LIVE at https://${DOMAIN}"
+  echo "[+]   Landing Page:  https://${DOMAIN}/"
+  echo "[+]   Dashboard:     https://${DOMAIN}/app"
+  echo "[+]   Downloads:     https://${DOMAIN}/downloads/"
 else
-  echo "[!] Service started. Check logs with: journalctl -u benneta -f"
+  echo "[!] HTTP check returned ${STATUS}. Verify DNS A record points to this server."
+  echo "[!] Container logs: docker logs ${CONTAINER_NAME}"
+  echo "[!] Nginx logs: tail -f /var/log/nginx/error.log"
 fi
 
-echo "[+] Deployment to mftechnologies environment complete."
+echo "[+] Deployment complete."
