@@ -24,14 +24,24 @@ fn get_project_root() -> PathBuf {
 }
 
 fn open_browser(url: &str) {
+    let app_flag = format!("--app={}", url);
     if cfg!(target_os = "windows") {
-        let _ = Command::new("cmd")
-            .args(["/C", "start", url])
-            .spawn();
+        if Command::new("msedge").arg(&app_flag).spawn().is_err() {
+            let _ = Command::new("cmd").args(["/C", "start", url]).spawn();
+        }
     } else if cfg!(target_os = "macos") {
         let _ = Command::new("open").arg(url).spawn();
     } else {
-        let _ = Command::new("xdg-open").arg(url).spawn();
+        // Linux: launch in dedicated standalone app window
+        let launched = Command::new("brave-browser")
+            .arg(&app_flag)
+            .spawn()
+            .or_else(|_| Command::new("google-chrome").arg(&app_flag).spawn())
+            .or_else(|_| Command::new("chromium-browser").arg(&app_flag).spawn());
+
+        if launched.is_err() {
+            let _ = Command::new("xdg-open").arg(url).spawn();
+        }
     }
 }
 
