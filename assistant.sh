@@ -24,6 +24,12 @@ fi
 CMD="${1:-help}"
 
 case "$CMD" in
+    ui|web|dashboard)
+        PORT="${2:-8765}"
+        echo "[+] Starting Assistant Web Dashboard on http://localhost:$PORT ..."
+        echo "[+] Press Ctrl+C to stop."
+        php -S "0.0.0.0:$PORT" -t "$DIR/web"
+        ;;
     configure|config|setup)
         python3 "$DIR/python/setup_config.py"
         ;;
@@ -71,6 +77,9 @@ case "$CMD" in
         echo "   ASSISTANT: EMAIL & DAILY TASK MANAGER (PC: LINUX & WIN)  "
         echo "============================================================"
         echo "Usage: ./assistant.sh <command>"
+        echo ""
+        echo "Web Dashboard:"
+        echo "  ui [port]              Start interactive Web Dashboard (default: 8765)"
         echo ""
         echo "Email & Notifications:"
         echo "  configure              Setup live IMAP mailbox credentials"

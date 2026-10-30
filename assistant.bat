@@ -23,6 +23,9 @@ if not exist "%DIR%data\assistant.db" (
 set "CMD=%~1"
 if "%CMD%"=="" set "CMD=help"
 
+if /i "%CMD%"=="ui" goto do_ui
+if /i "%CMD%"=="web" goto do_ui
+if /i "%CMD%"=="dashboard" goto do_ui
 if /i "%CMD%"=="configure" goto do_config
 if /i "%CMD%"=="config" goto do_config
 if /i "%CMD%"=="setup" goto do_config
@@ -44,6 +47,14 @@ if /i "%CMD%"=="daemon" goto do_daemon
 if /i "%CMD%"=="sync" goto do_sync
 if /i "%CMD%"=="notify" goto do_notify
 goto do_help
+
+:do_ui
+set "PORT=%~2"
+if "%PORT%"=="" set "PORT=8765"
+echo [+] Starting Assistant Web Dashboard on http://localhost:%PORT% ...
+echo [+] Press Ctrl+C to stop.
+php -S 0.0.0.0:%PORT% -t "%DIR%web"
+goto end
 
 :do_config
 python "%DIR%python\setup_config.py"
@@ -98,6 +109,9 @@ echo ============================================================
 echo    ASSISTANT: EMAIL ^& DAILY TASK MANAGER (PC: LINUX ^& WIN)  
 echo ============================================================
 echo Usage: assistant.bat ^<command^>
+echo.
+echo Web Dashboard:
+echo   ui [port]              Start interactive Web Dashboard (default: 8765)
 echo.
 echo Email ^& Notifications:
 echo   configure              Setup live IMAP mailbox credentials

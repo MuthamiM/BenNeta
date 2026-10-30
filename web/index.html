@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistant - Email Intelligence & Daily Tasks Dashboard</title>
+    <style>
+        :root {
+            --bg-main: #0a0d12;
+            --bg-card: #12171f;
+            --bg-card-hover: #171e28;
+            --border: #232c3d;
+            --border-highlight: #3b4860;
+            --text-primary: #f0f4f8;
+            --text-secondary: #8c9ba5;
+            --text-muted: #576574;
+            --accent-cyan: #00b4d8;
+            --accent-green: #2ec4b6;
+            --accent-red: #e63946;
+            --accent-yellow: #ffb703;
+            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-family);
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .brand-sub {
+            font-size: 0.75rem;
+            color: var(--accent-cyan);
+            background: rgba(0, 180, 216, 0.1);
+            border: 1px solid rgba(0, 180, 216, 0.3);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+            display: inline-block;
+        }
+
+        .badge-green { background: rgba(46, 196, 182, 0.15); color: var(--accent-green); border: 1px solid var(--accent-green); }
+        .badge-red { background: rgba(230, 57, 70, 0.15); color: var(--accent-red); border: 1px solid var(--accent-red); }
+        .badge-yellow { background: rgba(255, 183, 3, 0.15); color: var(--accent-yellow); border: 1px solid var(--accent-yellow); }
+        .badge-cyan { background: rgba(0, 180, 216, 0.15); color: var(--accent-cyan); border: 1px solid var(--accent-cyan); }
+        .badge-gray { background: #232c3d; color: var(--text-secondary); border: 1px solid #3b4860; }
+
+        button, .btn {
+            background: #1a2230;
+            color: var(--text-primary);
+            border: 1px solid var(--border-highlight);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        button:hover, .btn:hover {
+            background: #253145;
+            border-color: var(--accent-cyan);
+        }
+
+        .btn-primary {
+            background: #0077b6;
+            border-color: var(--accent-cyan);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: #0096c7;
+        }
+
+        .btn-success {
+            background: #1b493b;
+            border-color: var(--accent-green);
+            color: #afffdf;
+        }
+        .btn-success:hover {
+            background: #246551;
+        }
+
+        .btn-danger {
+            background: #4a151b;
+            border-color: var(--accent-red);
+            color: #ffb8bf;
+        }
+        .btn-danger:hover {
+            background: #681f27;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
+            width: 100%;
+            flex: 1;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 1rem 1.25rem;
+            border-radius: 6px;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.3rem;
+            font-weight: 700;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .tabs-nav {
+            display: flex;
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            border-radius: 0;
+            padding: 0.75rem 1.25rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .tab-btn:hover {
+            background: transparent;
+            color: var(--text-primary);
+        }
+
+        .tab-btn.active {
+            color: var(--accent-cyan);
+            border-bottom: 2px solid var(--accent-cyan);
+            font-weight: 700;
+        }
+
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .item-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .item-main {
+            flex: 1;
+        }
+
+        .item-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.4rem;
+        }
+
+        .item-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .item-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            background: #0d1117;
+            padding: 0.6rem 0.8rem;
+            border-radius: 4px;
+            border-left: 3px solid var(--border-highlight);
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .alert-banner {
+            background: rgba(230, 57, 70, 0.1);
+            border: 1px solid var(--accent-red);
+            color: #ff9fa8;
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        input[type="text"], input[type="password"], input[type="number"], select, textarea {
+            background: #0d121a;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 0.55rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: #0d121a;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Modal styling */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-body {
+            background: var(--bg-card);
+            border: 1px solid var(--border-highlight);
+            border-radius: 6px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+        .modal-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .diagram-box {
+            background: #080b0f;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            font-family: monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #d1d9e0;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        .task-completed {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        #scan-log {
+            background: #080b0f;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 0.75rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: #98c379;
+            max-height: 120px;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+            display: none;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand-title">
+            <span>ASSISTANT</span>
+            <span class="brand-sub">PC ENGINE (PYTHON + PHP + RUST)</span>
+        </div>
+        <div class="header-actions">
+            <span id="mailbox-badge" class="badge badge-gray">[CHECKING STATUS...]</span>
+            <button id="dnd-btn" onclick="toggleDnd()">DND: [ON]</button>
+            <button class="btn-primary" onclick="triggerScan()">[SCAN LIVE MAILBOX]</button>
+            <button onclick="openModal('diagrams-modal')">[WORKFLOW DIAGRAMS]</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Scan Log Banner -->
+        <div id="scan-log"></div>
+
+        <!-- Quick Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Pending Approval</div>
+                <div id="stat-pending" class="stat-value">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Missed While Off/DND</div>
+                <div id="stat-missed" class="stat-value" style="color: var(--accent-red);">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Active Daily Tasks</div>
+                <div id="stat-todo" class="stat-value" style="color: var(--accent-cyan);">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Completed Tasks</div>
+                <div id="stat-completed" class="stat-value" style="color: var(--accent-green);">0</div>
+            </div>
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="tabs-nav">
+            <button class="tab-btn active" onclick="switchTab('review-tab')">[APPROVAL QUEUE]</button>
+            <button class="tab-btn" onclick="switchTab('tasks-tab')">[DAILY TASKS BOARD]</button>
+            <button class="tab-btn" onclick="switchTab('rules-tab')">[NOTIFICATION ACTION RULES]</button>
+            <button class="tab-btn" onclick="switchTab('config-tab')">[LIVE IMAP SETTINGS]</button>
+        </div>
+
+        <!-- TAB 1: REVIEW & APPROVAL QUEUE -->
+        <div id="review-tab" class="tab-content active">
+            <div id="missed-alert-banner" class="alert-banner" style="display: none;">
+                <span id="missed-alert-text">[!] High-priority notifications were detected while notifications were OFF / Quiet Hours.</span>
+            </div>
+            <div id="pending-list">
+                <div class="card" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                    [+] Loading pending queue...
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: DAILY TASKS BOARD -->
+        <div id="tasks-tab" class="tab-content">
+            <div class="card">
+                <div style="font-weight: 700; margin-bottom: 0.75rem; font-size: 0.95rem;">[+] ADD MANUAL DAILY TASK</div>
+                <form id="add-task-form" onsubmit="addDailyTask(event)" class="form-grid">
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>Task Title</label>
+                        <input type="text" id="task-title" placeholder="e.g., Update nginx reverse proxy config" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Priority</label>
+                        <select id="task-priority">
+                            <option value="HIGH">[HIGH]</option>
+                            <option value="MEDIUM" selected>[MEDIUM]</option>
+                            <option value="LOW">[LOW]</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Due Date / Time</label>
+                        <input type="text" id="task-due" placeholder="e.g., Today 5:00 PM">
+                    </div>
+                    <div class="form-group" style="align-self: flex-end;">
+                        <button type="submit" class="btn-success" style="width: 100%;">[ADD TASK]</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card">
+                <div style="font-weight: 700; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                    <span>DAILY TASKS (SYNCED WITH ~/todo.txt)</span>
+                    <button onclick="loadDailyTasks()">[REFRESH]</button>
+                </div>
+                <div id="tasks-table-container">
+                    <table id="tasks-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">STATUS</th>
+                                <th style="width: 90px;">PRIORITY</th>
+                                <th>TITLE & NOTES</th>
+                                <th style="width: 150px;">DUE DATE</th>
+                                <th style="width: 80px;">ACTION</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tasks-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: NOTIFICATION ACTION RULES -->
+        <div id="rules-tab" class="tab-content">
+            <div class="card">
+                <div style="font-weight: 700; margin-bottom: 0.5rem;">[+] DEFINE WHAT THE ASSISTANT DOES ON SPECIFIC NOTIFICATIONS</div>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
+                    When incoming notifications or emails match your keywords, you can configure the assistant to auto-approve them, dispatch desktop alerts, run custom shell commands, or auto-dismiss them.
+                </p>
+                <form id="add-rule-form" onsubmit="addRule(event)" class="form-grid">
+                    <div class="form-group">
+                        <label>Rule Name</label>
+                        <input type="text" id="rule-name" placeholder="e.g., Critical Server Alerts" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Subject Keywords (comma-separated)</label>
+                        <input type="text" id="rule-subject" placeholder="e.g., outage, failed, error">
+                    </div>
+                    <div class="form-group">
+                        <label>Sender Keywords (comma-separated)</label>
+                        <input type="text" id="rule-sender" placeholder="e.g., alert@, monitoring@">
+                    </div>
+                    <div class="form-group">
+                        <label>Action to Execute</label>
+                        <select id="rule-action">
+                            <option value="ask">Ask to allow (Queue for manual review)</option>
+                            <option value="auto_approve">Auto-approve into Daily Tasks</option>
+                            <option value="auto_approve_and_notify">Auto-approve AND send Desktop Alert</option>
+                            <option value="auto_dismiss">Auto-dismiss (Ignore/Archive)</option>
+                            <option value="execute_command">Execute shell command & queue</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Target Priority</label>
+                        <select id="rule-priority">
+                            <option value="HIGH">[HIGH]</option>
+                            <option value="MEDIUM" selected>[MEDIUM]</option>
+                            <option value="LOW">[LOW]</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Shell Command (Optional)</label>
+                        <input type="text" id="rule-command" placeholder="e.g., systemctl restart service">
+                    </div>
+                    <div class="form-group" style="grid-column: span 2;">
+                        <button type="submit" class="btn-primary">[SAVE ACTION RULE]</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card">
+                <div style="font-weight: 700; margin-bottom: 1rem;">ACTIVE NOTIFICATION ACTION RULES</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 40px;">ID</th>
+                            <th>RULE NAME</th>
+                            <th style="width: 180px;">ACTION</th>
+                            <th style="width: 90px;">PRIORITY</th>
+                            <th>MATCH KEYWORDS</th>
+                            <th style="width: 80px;">ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rules-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB 4: LIVE IMAP SETTINGS -->
+        <div id="config-tab" class="tab-content">
+            <div class="card">
+                <div style="font-weight: 700; margin-bottom: 0.5rem;">[+] LIVE IMAP MAILBOX SETTINGS</div>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
+                    Connect directly to your live mail server over SSL/TLS. Credentials are saved locally to config/config.json (chmod 600) and never shared.
+                </p>
+                <form id="imap-form" onsubmit="saveImapSettings(event)" class="form-grid">
+                    <div class="form-group">
+                        <label>IMAP Host</label>
+                        <input type="text" id="cfg-host" placeholder="e.g., mailserver.businessidentity.llc, imap.gmail.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>IMAP Port</label>
+                        <input type="number" id="cfg-port" value="993" required>
+                    </div>
+                    <div class="form-group">
+                        <label>SSL Mode</label>
+                        <select id="cfg-ssl">
+                            <option value="1" selected>SSL/TLS (Port 993)</option>
+                            <option value="0">Plain / STARTTLS (Port 143)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Mailbox Folder</label>
+                        <input type="text" id="cfg-folder" value="INBOX" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Username / Email</label>
+                        <input type="text" id="cfg-user" placeholder="e.g., user@domain.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Password (Leave blank to keep existing)</label>
+                        <input type="password" id="cfg-pass" placeholder="••••••••">
+                    </div>
+                    <div class="form-group" style="grid-column: span 2;">
+                        <button type="submit" class="btn-primary">[SAVE SETTINGS & TEST LIVE]</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- WORKFLOW DIAGRAMS MODAL -->
+    <div id="diagrams-modal" class="modal">
+        <div class="modal-body">
+            <div class="modal-header">
+                <div class="modal-title">[SYSTEM ARCHITECTURE & WORKFLOW DIAGRAMS]</div>
+                <button onclick="closeModal('diagrams-modal')">[CLOSE]</button>
+            </div>
+
+            <div style="font-weight: 700; margin-bottom: 0.5rem; color: var(--accent-cyan);">1. END-TO-END PIPELINE ARCHITECTURE</div>
+            <div class="diagram-box">
++-----------------------------------------------------------------------------------------+
+|                                    LIVE MAILBOX (IMAP SSL)                              |
++-----------------------------------------------------------------------------------------+
+                                             |
+                                             v
+               +-----------------------------------------------------------+
+               |                  PYTHON EMAIL FETCHER                     |
+               | - Connects over IMAP (RFC822 / UNSEEN)                    |
+               | - MIME Multipart parser & text body stripper              |
+               | - NLP heuristic extractor (Subject, Action, Deadlines)    |
+               +-----------------------------------------------------------+
+                                             |
+                                             v
+               +-----------------------------------------------------------+
+               |              NOTIFICATION GUARD & STATUS CHECK            |
+               | - Checks if email arrived during:                         |
+               |   * Quiet Hours (e.g. 22:00 - 08:00)                      |
+               |   * Manual Do Not Disturb (DND Active)                    |
+               |   * System Mute (Linux Dunst/GNOME or Windows Focus)      |
+               | - If off: flags item as [MISSED WHILE NOTIFICATIONS OFF]  |
+               +-----------------------------------------------------------+
+                                             |
+                                             v
+               +-----------------------------------------------------------+
+               |               ACTION RULES EVALUATOR (POLICY)             |
+               | - Matches subject keywords & sender filters               |
+               |                                                           |
+               | +-------------------------+-----------------------------+ |
+               | | MATCHED SPECIFIC RULE?  | ACTION TAKEN:               | |
+               | +-------------------------+-----------------------------+ |
+               | | Rule -> Auto-Approve    | Insert directly to Tasks    | |
+               | | Rule -> Execute Command | Run Shell command on PC     | |
+               | | Rule -> Auto-Dismiss    | Archive immediately         | |
+               | | No Rule / Default       | Queue for User Approval     | |
+               | +-------------------------+-----------------------------+ |
+               +-----------------------------------------------------------+
+                                             |
+                                             v
+               +-----------------------------------------------------------+
+               |             INTERACTIVE APPROVAL QUEUE ("ASK")            |
+               | - User prompts via Web Dashboard or Terminal:             |
+               |   * [A]llow into Daily Tasks                              |
+               |   * [E]dit title, priority, due date                      |
+               |   * [D]ismiss / Ignore                                    |
+               +-----------------------------------------------------------+
+                                             |
+                                             v
+               +-----------------------------------------------------------+
+               |           DAILY TASKS STORAGE & SYNCHRONIZATION           |
+               | - SQLite Database (data/assistant.db)                     |
+               | - Plaintext todo.txt sync (~/todo.txt)                    |
+               | - PHP Task Manager CLI & Web API                          |
+               +-----------------------------------------------------------+
+                                             ^
+                                             |  Watches & Notifies
+               +-----------------------------------------------------------+
+               |              RUST BACKGROUND MONITORING DAEMON            |
+               | - Minimal RAM (< 5 MB), 0% CPU idle                       |
+               | - Cross-platform PC native alerts:                        |
+               |   * Linux: notify-send                                    |
+               |   * Windows: PowerShell Toast Notification                |
+               +-----------------------------------------------------------+
+            </div>
+
+            <div style="font-weight: 700; margin-bottom: 0.5rem; color: var(--accent-cyan);">2. "NOTIFICATIONS OFF" MISSED ALERT WORKFLOW</div>
+            <div class="diagram-box">
+  [Incoming Email Arrives]
+            |
+            v
+  Is Current Mode = DND (OFF)  --[YES]--> Flag: [MISSED WHILE NOTIFICATIONS OFF]
+  OR Within Quiet Hours (22:00-08:00)?        |
+            |                                 v
+          [NO]                     Highlighted with Red Alert Flag
+            |                                 |
+            v                                 v
+  Standard Notification Flow       Queued in Pending Approval List with Priority Alert
+            </div>
+
+            <div style="font-weight: 700; margin-bottom: 0.5rem; color: var(--accent-cyan);">3. USER APPROVAL & ACTION SELECTION MATRIX</div>
+            <div class="diagram-box">
++---------------------+---------------------------------------------------------------+
+| User Selection      | System Action                                                 |
++---------------------+---------------------------------------------------------------+
+| [A] Allow           | Inserts into `daily_tasks` table and appends to ~/todo.txt     |
+| [E] Edit & Allow    | Prompts for modified title/priority/deadline, then allocates  |
+| [D] Dismiss         | Marks as 'dismissed', hides from queue                        |
+| [S] Skip            | Retains in pending state for later review                     |
++---------------------+---------------------------------------------------------------+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentMode = "ON";
+
+        async function fetchStatus() {
+            try {
+                const res = await fetch('api.php?action=status');
+                const data = await res.json();
+                if (data.success) {
+                    currentMode = data.notifications_mode;
+                    document.getElementById('stat-pending').innerText = data.pending_count;
+                    document.getElementById('stat-missed').innerText = data.missed_count;
+                    document.getElementById('stat-todo').innerText = data.todo_count;
+                    document.getElementById('stat-completed').innerText = data.completed_count;
+
+                    const mbBadge = document.getElementById('mailbox-badge');
+                    if (data.configured) {
+                        mbBadge.className = 'badge badge-green';
+                        mbBadge.innerText = `[CONNECTED: ${data.username || data.host}]`;
+                    } else {
+                        mbBadge.className = 'badge badge-yellow';
+                        mbBadge.innerText = '[MAILBOX NOT CONFIGURED]';
+                    }
+
+                    const dndBtn = document.getElementById('dnd-btn');
+                    if (currentMode === 'OFF') {
+                        dndBtn.className = 'badge-red';
+                        dndBtn.innerText = 'NOTIFICATIONS: [OFF - DND ACTIVE]';
+                    } else {
+                        dndBtn.className = 'badge-green';
+                        dndBtn.innerText = 'NOTIFICATIONS: [ON]';
+                    }
+
+                    const missedBanner = document.getElementById('missed-alert-banner');
+                    if (data.missed_count > 0) {
+                        missedBanner.style.display = 'flex';
+                        document.getElementById('missed-alert-text').innerText = 
+                            `[!] ${data.missed_count} action item(s) arrived while notifications were OFF / Quiet Hours.`;
+                    } else {
+                        missedBanner.style.display = 'none';
+                    }
+
+                    // Populate config inputs if empty
+                    if (data.host && !document.getElementById('cfg-host').value) {
+                        document.getElementById('cfg-host').value = data.host;
+                        document.getElementById('cfg-user').value = data.username;
+                        document.getElementById('cfg-folder').value = data.folder;
+                    }
+                }
+            } catch (err) {
+                console.error("Status error:", err);
+            }
+        }
+
+        async function loadPending() {
+            try {
+                const res = await fetch('api.php?action=get_pending');
+                const data = await res.json();
+                const container = document.getElementById('pending-list');
+
+                if (!data.success || !data.data || data.data.length === 0) {
+                    container.innerHTML = `
+                        <div class="card" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+                            [+] All caught up! No tasks waiting for approval.
+                        </div>`;
+                    return;
+                }
+
+                container.innerHTML = data.data.map(item => {
+                    const isMissed = item.is_missed_notification == 1;
+                    const prioClass = item.priority === 'HIGH' ? 'badge-red' : (item.priority === 'MEDIUM' ? 'badge-yellow' : 'badge-green');
+                    return `
+                        <div class="card">
+                            <div class="item-row">
+                                <div class="item-main">
+                                    <div class="item-title">${escapeHtml(item.title)}</div>
+                                    <div class="item-meta">
+                                        <span class="badge ${prioClass}">[${item.priority}]</span>
+                                        ${isMissed ? '<span class="badge badge-red">[MISSED WHILE NOTIFICATIONS OFF]</span>' : ''}
+                                        <span>From: <strong>${escapeHtml(item.sender || 'Unknown')}</strong></span>
+                                        <span>Subject: <em>${escapeHtml(item.subject || '(No Subject)')}</em></span>
+                                        <span>Due: <strong>${escapeHtml(item.due_hint || 'None')}</strong></span>
+                                    </div>
+                                    ${item.description ? `<div class="item-desc">${escapeHtml(item.description)}</div>` : ''}
+                                </div>
+                                <div class="item-actions">
+                                    <button class="btn-success" onclick="approveTask(${item.id})">[ALLOW TO TASKS]</button>
+                                    <button class="btn-danger" onclick="dismissTask(${item.id})">[DISMISS]</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function loadDailyTasks() {
+            try {
+                const res = await fetch('api.php?action=get_tasks');
+                const data = await res.json();
+                const tbody = document.getElementById('tasks-tbody');
+
+                if (!data.success || !data.data || data.data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No daily tasks yet.</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = data.data.map(t => {
+                    const isDone = t.status === 'completed';
+                    const prioClass = t.priority === 'HIGH' ? 'badge-red' : (t.priority === 'MEDIUM' ? 'badge-yellow' : 'badge-green');
+                    return `
+                        <tr>
+                            <td>
+                                <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleTask(${t.id})">
+                            </td>
+                            <td><span class="badge ${prioClass}">[${t.priority}]</span></td>
+                            <td class="${isDone ? 'task-completed' : ''}">
+                                <strong>${escapeHtml(t.title)}</strong>
+                                ${t.notes ? `<div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">${escapeHtml(t.notes)}</div>` : ''}
+                            </td>
+                            <td>${escapeHtml(t.due_date || '-')}</td>
+                            <td>
+                                <button class="badge-gray" onclick="toggleTask(${t.id})">${isDone ? '[REOPEN]' : '[DONE]'}</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function loadRules() {
+            try {
+                const res = await fetch('api.php?action=get_rules');
+                const data = await res.json();
+                const tbody = document.getElementById('rules-tbody');
+
+                if (!data.success || !data.data || data.data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No custom rules defined yet.</td></tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = data.data.map(r => {
+                    const subj = (r.match_subject || []).join(', ') || '(any)';
+                    const sender = (r.match_sender || []).join(', ') || '(any)';
+                    const prioClass = r.target_priority === 'HIGH' ? 'badge-red' : (r.target_priority === 'MEDIUM' ? 'badge-yellow' : 'badge-green');
+                    return `
+                        <tr>
+                            <td>${r.id}</td>
+                            <td><strong>${escapeHtml(r.name || 'Rule')}</strong></td>
+                            <td><span class="badge badge-cyan">[${escapeHtml(r.action)}]</span></td>
+                            <td><span class="badge ${prioClass}">[${r.target_priority || 'MED'}]</span></td>
+                            <td>
+                                <div>Subj: <code>${escapeHtml(subj)}</code></div>
+                                <div>From: <code>${escapeHtml(sender)}</code></div>
+                                ${r.command ? `<div style="color: var(--accent-cyan); font-size: 0.75rem;">Cmd: <code>${escapeHtml(r.command)}</code></div>` : ''}
+                            </td>
+                            <td>
+                                <button class="btn-danger" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;" onclick="deleteRule(${r.id})">[DELETE]</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function triggerScan() {
+            const logBox = document.getElementById('scan-log');
+            logBox.style.display = 'block';
+            logBox.innerText = '[*] Scanning live IMAP mailbox for emails and missed notifications...';
+            try {
+                const res = await fetch('api.php?action=scan', { method: 'POST' });
+                const data = await res.json();
+                logBox.innerText = data.output || '[+] Scan completed.';
+                fetchStatus();
+                loadPending();
+                loadDailyTasks();
+            } catch (err) {
+                logBox.innerText = '[-] Scan failed: ' + err;
+            }
+        }
+
+        async function approveTask(id) {
+            try {
+                const res = await fetch('api.php?action=approve_task', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    fetchStatus();
+                    loadPending();
+                    loadDailyTasks();
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function dismissTask(id) {
+            try {
+                const res = await fetch('api.php?action=dismiss_task', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    fetchStatus();
+                    loadPending();
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function toggleTask(id) {
+            try {
+                const res = await fetch('api.php?action=toggle_task', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    fetchStatus();
+                    loadDailyTasks();
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function addDailyTask(e) {
+            e.preventDefault();
+            const title = document.getElementById('task-title').value;
+            const priority = document.getElementById('task-priority').value;
+            const due_date = document.getElementById('task-due').value;
+
+            try {
+                const res = await fetch('api.php?action=add_task', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, priority, due_date })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('task-title').value = '';
+                    document.getElementById('task-due').value = '';
+                    fetchStatus();
+                    loadDailyTasks();
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function toggleDnd() {
+            const nextMode = currentMode === 'ON' ? 'OFF' : 'ON';
+            try {
+                const res = await fetch('api.php?action=toggle_dnd', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mode: nextMode })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    fetchStatus();
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function saveImapSettings(e) {
+            e.preventDefault();
+            const host = document.getElementById('cfg-host').value;
+            const port = document.getElementById('cfg-port').value;
+            const ssl = document.getElementById('cfg-ssl').value;
+            const folder = document.getElementById('cfg-folder').value;
+            const username = document.getElementById('cfg-user').value;
+            const password = document.getElementById('cfg-pass').value;
+
+            try {
+                const res = await fetch('api.php?action=save_imap', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ host, port, ssl: ssl === '1', folder, username, password })
+                });
+                const data = await res.json();
+                alert(data.message || 'Saved');
+                fetchStatus();
+            } catch (err) {
+                alert('Error: ' + err);
+            }
+        }
+
+        async function addRule(e) {
+            e.preventDefault();
+            const name = document.getElementById('rule-name').value;
+            const match_subject = document.getElementById('rule-subject').value;
+            const match_sender = document.getElementById('rule-sender').value;
+            const rule_action = document.getElementById('rule-action').value;
+            const target_priority = document.getElementById('rule-priority').value;
+            const command = document.getElementById('rule-command').value;
+
+            try {
+                const res = await fetch('api.php?action=add_rule', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, match_subject, match_sender, rule_action, target_priority, command })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('rule-name').value = '';
+                    document.getElementById('rule-subject').value = '';
+                    document.getElementById('rule-sender').value = '';
+                    document.getElementById('rule-command').value = '';
+                    loadRules();
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function deleteRule(id) {
+            if (!confirm(`Delete rule #${id}?`)) return;
+            try {
+                const res = await fetch('api.php?action=delete_rule', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    loadRules();
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        // Initialize dashboard
+        fetchStatus();
+        loadPending();
+        loadDailyTasks();
+        loadRules();
+        setInterval(fetchStatus, 10000);
+    </script>
+</body>
+</html>
