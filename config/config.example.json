@@ -1,0 +1,44 @@
+{
+    "imap": {
+        "host": "mailserver.example.com",
+        "port": 993,
+        "ssl": true,
+        "username": "user@example.com",
+        "password": "YOUR_APP_PASSWORD_HERE",
+        "folder": "INBOX",
+        "search_criterion": "UNSEEN",
+        "fetch_limit": 25
+    },
+    "notifications": {
+        "desktop_alerts": true,
+        "mode": "AUTO",
+        "quiet_hours_enabled": true,
+        "quiet_start": "22:00",
+        "quiet_end": "08:00"
+    },
+    "rules": [
+        {
+            "id": 1,
+            "name": "Critical Infrastructure Outage",
+            "match_subject": ["outage", "server down", "critical alert", "failed"],
+            "match_sender": ["alert@", "monitoring@"],
+            "action": "auto_approve_and_notify",
+            "target_priority": "HIGH",
+            "command": ""
+        },
+        {
+            "id": 2,
+            "name": "Meetings and Calendar Invites",
+            "match_subject": ["invitation:", "meeting", "zoom link", "schedule call"],
+            "match_sender": [],
+            "action": "auto_approve",
+            "target_priority": "MEDIUM",
+            "command": ""
+        }
+    ],
+    "daemon": {
+        "poll_interval_seconds": 60,
+        "sync_todo_txt": true,
+        "todo_txt_path": "~/todo.txt"
+    }
+}

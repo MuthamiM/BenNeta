@@ -1,0 +1,27 @@
+# Assistant Git Ignore (PC: Linux and Windows)
+
+# Credentials and sensitive settings
+config/config.json
+
+# Local SQLite databases and logs
+data/*.db
+data/*.db-journal
+data/*.log
+*.log
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv/
+venv/
+
+# Rust compiled build artifacts
+rust/target/
+Cargo.lock
+
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini
