@@ -1,10 +1,11 @@
 """
 Gmail Live Connector for musamwange2@gmail.com.
 Fetches today's inbox emails, runs multi-factor spam detection, and extracts action items.
-Zero emojis. PC support for Linux and Windows.
+Sanitizes all text to guarantee zero emojis. PC support for Linux and Windows.
 """
 
 import sys
+import re
 import imaplib
 import email
 from email.header import decode_header
@@ -19,6 +20,16 @@ GMAIL_USER = "musamwange2@gmail.com"
 GMAIL_HOST = "imap.gmail.com"
 GMAIL_PORT = 993
 
+EMOJI_REGEX = re.compile(
+    r"[\U00010000-\U0010ffff]|[\u2600-\u27bf]|[\u2300-\u23ff]|[\u2b50]|[\u3030]|[\u00a9]|[\u00ae]|[\u2122]",
+    flags=re.UNICODE
+)
+
+def strip_emojis(text):
+    if not text:
+        return ""
+    return EMOJI_REGEX.sub("", text).strip()
+
 def decode_mime_header(val):
     if not val:
         return ""
@@ -32,7 +43,7 @@ def decode_mime_header(val):
                 out.append(f.decode("latin1", errors="replace"))
         else:
             out.append(str(f))
-    return "".join(out)
+    return strip_emojis("".join(out))
 
 def extract_body(msg):
     body = ""
@@ -63,13 +74,12 @@ def extract_body(msg):
                 body = payload.decode(msg.get_content_charset() or "utf-8", errors="replace")
         except Exception:
             body = str(msg.get_payload())
-    return body
+    return strip_emojis(body)
 
 def get_gmail_credentials():
     cfg = load_config()
     imap_cfg = cfg.get("imap", {})
 
-    # If configured with musamwange2@gmail.com
     username = imap_cfg.get("username") or GMAIL_USER
     password = imap_cfg.get("password") or ""
     host = imap_cfg.get("host") or GMAIL_HOST
@@ -87,7 +97,7 @@ def fetch_todays_gmail_inbox(limit=30):
         return {
             "status": "AUTH_REQUIRED",
             "account": GMAIL_USER,
-            "message": "Gmail App Password required. Generate a 16-character App Password at https://myaccount.google.com/apppasswords and save it in settings.",
+            "message": "Gmail App Password required. Save your 16-character App Password in config.json.",
             "emails": []
         }
 
@@ -97,28 +107,21 @@ def fetch_todays_gmail_inbox(limit=30):
     actionable_count = 0
 
     try:
-        print(f"[*] Connecting to {host}:{GMAIL_PORT} SSL for {username}...")
         client = imaplib.IMAP4_SSL(host, GMAIL_PORT, timeout=15)
         client.login(username, password)
         client.select("INBOX", readonly=True)
 
-        # IMAP date format for today: '30-Oct-2026'
         today_imap_date = date.today().strftime("%d-%b-%Y")
         search_criterion = f'(SINCE "{today_imap_date}")'
 
-        print(f"[*] Querying inbox for today's emails (Criterion: {search_criterion})...")
         status, data = client.search(None, search_criterion)
 
         if status != "OK" or not data or not data[0]:
-            # Fallback to recent 20 messages if today had no incoming
-            print("[*] No messages under SINCE today; inspecting recent messages...")
             status, data = client.search(None, "ALL")
 
         msg_ids = data[0].split() if (data and data[0]) else []
         msg_ids = msg_ids[-limit:] if len(msg_ids) > limit else msg_ids
         msg_ids.reverse()
-
-        print(f"[+] Found {len(msg_ids)} messages to process.")
 
         for mid in msg_ids:
             res, msg_data = client.fetch(mid, "(RFC822)")
@@ -131,7 +134,6 @@ def fetch_todays_gmail_inbox(limit=30):
             subject = decode_mime_header(parsed.get("Subject", "(No Subject)"))
             sender = decode_mime_header(parsed.get("From", "(Unknown Sender)"))
             date_hdr = parsed.get("Date")
-            msg_id_hdr = parsed.get("Message-ID", f"mid-{mid.decode()}")
 
             try:
                 date_sent = parsedate_to_datetime(date_hdr) if date_hdr else datetime.now()
@@ -185,7 +187,7 @@ def fetch_todays_gmail_inbox(limit=30):
         return {
             "status": "AUTH_FAILED",
             "account": username,
-            "error": f"IMAP authentication failed: {e}. Check if Google App Password is correct."
+            "error": f"IMAP authentication failed: {e}. Verify Google App Password."
         }
     except Exception as e:
         return {
@@ -203,4 +205,4 @@ def fetch_todays_gmail_inbox(limit=30):
 
 if __name__ == "__main__":
     res = fetch_todays_gmail_inbox(limit=10)
-    print(res)
+    print(f"[+] Retrieved {res.get('total_today')} emails from today's inbox.")
