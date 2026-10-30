@@ -17,7 +17,7 @@ class TaskController extends BaseController {
     }
 
     public function runTask(Request $request): Response {
-        $taskKey = $request->input('task');
+        $taskKey = $request->input('task') ?: $request->input('task_key');
         if (empty($taskKey)) {
             return $this->error("Task key required", 400);
         }

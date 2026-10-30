@@ -16,8 +16,8 @@ class SecurityMiddleware implements MiddlewareInterface {
         'sql_injection' => '/(\b(union\s+select|select\s+.*\s+from|insert\s+into|drop\s+table|delete\s+from|alter\s+table)\b|--|\/\*|\*\/)/i',
         'xss' => '/(<script\b[^>]*>.*?<\/script>|javascript:|onerror\s*=|onload\s*=|alert\(|eval\()/i',
         'path_traversal' => '/(\.\.\/|\.\.\\\\|%2e%2e%2f|%2e%2e\/)/i',
-        'shell_injection' => '/(;|\&\&|\|\||`|\$\(.*\)|\/bin\/(sh|bash|zsh))/i',
-        'credential_stuffing' => '/(admin\'\s*or|password\'\s*or|1=1)/i'
+        'shell_injection' => '/(;\s*(?:cat|ls|rm|chmod|chown|wget|curl|nc|bash|sh|kill|reboot|sudo|python|perl|ruby)\b|\&\&\s*[a-z]|\b\|\|\s*[a-z]|`|\$\([^\)]*\)|\/bin\/(sh|bash|zsh))/i',
+        'credential_stuffing' => '/(\badmin\'\s*or\b|\bpassword\'\s*or\b|\b1=1\b)/i'
     ];
 
     public function __construct(?DatabaseService $db = null) {
@@ -28,27 +28,24 @@ class SecurityMiddleware implements MiddlewareInterface {
         $ip = $request->getClientIp();
         $pdo = $this->db->getPdo();
 
-        // 1. Check if IP is currently blocked
-        try {
-            $stmt = $pdo->prepare("SELECT is_blocked, failed_attempts FROM security_ip_reputation WHERE ip = ?");
-            $stmt->execute([$ip]);
-            $rep = $stmt->fetch();
-            if ($rep && (int)$rep['is_blocked'] === 1) {
-                return Response::error('Access Denied. Your IP address has been isolated by BenNeta Security Sentinel.', 403, [
-                    'ip' => $ip,
-                    'reason' => 'IP_REPUTATION_BLOCKED',
-                    'error_code' => 'SECURITY_IP_BLOCKED'
-                ]);
-            }
-        } catch (\Exception $e) {}
+        // 1. Check if IP is currently blocked (exempt loopback IPs)
+        if (!in_array($ip, ['127.0.0.1', '::1', 'localhost'])) {
+            try {
+                $stmt = $pdo->prepare("SELECT is_blocked, failed_attempts FROM security_ip_reputation WHERE ip = ?");
+                $stmt->execute([$ip]);
+                $rep = $stmt->fetch();
+                if ($rep && (int)$rep['is_blocked'] === 1) {
+                    return Response::error('Access Denied. Your IP address has been isolated by BenNeta Security Sentinel.', 403, [
+                        'ip' => $ip,
+                        'reason' => 'IP_REPUTATION_BLOCKED',
+                        'error_code' => 'SECURITY_IP_BLOCKED'
+                    ]);
+                }
+            } catch (\Exception $e) {}
+        }
 
         // 2. Scan request parameters and payloads for exploit signatures
-        $payloadToScan = [
-            'uri' => $request->getUri(),
-            'query' => $request->all(),
-            'ua' => $request->getUserAgent()
-        ];
-        $payloadStr = json_encode($payloadToScan);
+        $payloadStr = json_encode($request->all());
 
         foreach ($this->exploitSignatures as $attackType => $regex) {
             if (preg_match($regex, $payloadStr)) {

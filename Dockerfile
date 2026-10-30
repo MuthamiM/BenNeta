@@ -6,6 +6,7 @@ FROM php:8.2-cli-alpine
 RUN apk add --no-cache \
     python3 \
     py3-pip \
+    py3-psutil \
     curl \
     sqlite \
     && rm -rf /var/cache/apk/*
