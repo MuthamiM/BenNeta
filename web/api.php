@@ -1,7 +1,6 @@
 <?php
 /**
- * REST API for Assistant Web Dashboard.
- * Interacts with SQLite, config.json, and executes Python/Rust operations.
+ * REST API for Assistant Web Dashboard, Security Microservices, & Gmail Connector.
  * Zero emojis. PC support for Linux and Windows.
  */
 
@@ -13,10 +12,11 @@ $configPath = $projectRoot . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATO
 $homeDir = getenv('HOME') ?: getenv('USERPROFILE') ?: sys_get_temp_dir();
 $todoPath = $homeDir . DIRECTORY_SEPARATOR . 'todo.txt';
 
+require_once __DIR__ . '/security_middleware.php';
+
 function getDb(): PDO {
-    global $dbPath;
+    global $dbPath, $projectRoot;
     if (!file_exists($dbPath)) {
-        $projectRoot = dirname(__DIR__);
         $cmd = (DIRECTORY_SEPARATOR === '\\') ? "python \"$projectRoot\\python\\db.py\"" : "python3 \"$projectRoot/python/db.py\"";
         shell_exec($cmd);
     }
@@ -55,15 +55,21 @@ function syncTodoTxt(): void {
     } catch (Exception $e) {}
 }
 
+$pdo = getDb();
+$cfg = loadConfig();
+
+// -------------------------------------------------------------
+// EXECUTE API SECURITY MICROSERVICE MIDDLEWARE
+// -------------------------------------------------------------
+$securityGuard = new ApiSecurityGuard($pdo, $cfg);
+$securityGuard->inspectRequest();
+
 $action = $_GET['action'] ?? '';
 $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
 
 try {
-    $pdo = getDb();
-
     switch ($action) {
         case 'status':
-            $cfg = loadConfig();
             $imap = $cfg['imap'] ?? [];
             $isConfigured = !empty($imap['host']) && !empty($imap['username']) && !empty($imap['password']);
 
@@ -80,18 +86,126 @@ try {
             $completedCount = $pdo->query("SELECT COUNT(*) as c FROM daily_tasks WHERE status = 'completed'")->fetch()['c'] ?? 0;
             $missedCount = $pdo->query("SELECT COUNT(*) as c FROM pending_tasks WHERE status = 'pending' AND is_missed_notification = 1")->fetch()['c'] ?? 0;
 
+            $securityThreats = $pdo->query("SELECT COUNT(*) as c FROM security_events WHERE severity IN ('HIGH', 'CRITICAL')")->fetch()['c'] ?? 0;
+            $blockedIps = $pdo->query("SELECT COUNT(*) as c FROM security_ip_reputation WHERE is_blocked = 1")->fetch()['c'] ?? 0;
+
+            $currentUser = "Musa";
+            $currentEmail = "musamwange2@gmail.com";
+            if (!empty($imap['username'])) {
+                $currentEmail = $imap['username'];
+                $currentUser = ucfirst(explode('@', $imap['username'])[0]);
+            }
+
             echo json_encode([
                 "success" => true,
                 "configured" => $isConfigured,
-                "host" => $imap['host'] ?? '',
-                "username" => $imap['username'] ?? '',
+                "user_name" => $currentUser,
+                "user_email" => $currentEmail,
+                "host" => $imap['host'] ?? 'imap.gmail.com',
+                "username" => $currentEmail,
                 "folder" => $imap['folder'] ?? 'INBOX',
                 "notifications_mode" => $dndMode,
                 "last_sync" => $lastSync,
                 "pending_count" => (int)$pendingCount,
                 "missed_count" => (int)$missedCount,
                 "todo_count" => (int)$tasksCount,
-                "completed_count" => (int)$completedCount
+                "completed_count" => (int)$completedCount,
+                "security_threats" => (int)$securityThreats,
+                "blocked_ips" => (int)$blockedIps
+            ]);
+            break;
+
+        case 'get_gmail_today':
+            $pythonCmd = (DIRECTORY_SEPARATOR === '\\') ? "python" : "python3";
+            $script = $projectRoot . DIRECTORY_SEPARATOR . 'python' . DIRECTORY_SEPARATOR . 'gmail_client.py';
+            $output = shell_exec("$pythonCmd \"$script\" 2>&1");
+            
+            $jsonStart = strpos($output, '{');
+            $data = null;
+            if ($jsonStart !== false) {
+                $jsonStr = substr($output, $jsonStart);
+                $data = json_decode($jsonStr, true);
+            }
+            echo json_encode(["success" => true, "data" => $data ?: ["status" => "NOTICE", "message" => $output]]);
+            break;
+
+        case 'get_security_metrics':
+            $pythonCmd = (DIRECTORY_SEPARATOR === '\\') ? "python" : "python3";
+            $script = $projectRoot . DIRECTORY_SEPARATOR . 'python' . DIRECTORY_SEPARATOR . 'security_engine.py';
+            $output = shell_exec("$pythonCmd \"$script\" 2>&1");
+
+            $jsonStart = strpos($output, 'Current Security Telemetry:');
+            $metrics = [];
+            if ($jsonStart !== false) {
+                $jsonPart = substr($output, $jsonStart + 27);
+                $metrics = json_decode(trim($jsonPart), true);
+            }
+            echo json_encode(["success" => true, "data" => $metrics ?: ["error" => $output]]);
+            break;
+
+        case 'simulate_security_test':
+            $testType = $input['test_type'] ?? 'path_traversal';
+            if ($testType === 'sql_injection') {
+                $securityGuard->logSecurityEvent("sql_injection", "CRITICAL", "Manual test: UNION SELECT probe triggered", true);
+            } else {
+                $securityGuard->logSecurityEvent("path_traversal", "CRITICAL", "Manual test: ../etc/passwd probe triggered", true);
+            }
+            echo json_encode(["success" => true, "message" => "Security probe logged and blocked by microservice."]);
+            break;
+
+        case 'save_gmail_credentials':
+            $username = trim($input['username'] ?? 'musamwange2@gmail.com');
+            $password = trim($input['password'] ?? '');
+            
+            $cfg['imap']['host'] = "imap.gmail.com";
+            $cfg['imap']['port'] = 993;
+            $cfg['imap']['ssl'] = true;
+            $cfg['imap']['username'] = $username;
+            if ($password) {
+                $cfg['imap']['password'] = $password;
+            }
+            $cfg['imap']['folder'] = "INBOX";
+            saveConfig($cfg);
+            echo json_encode(["success" => true, "message" => "Gmail credentials saved. Connecting to imap.gmail.com..."]);
+            break;
+
+        case 'get_automated_tasks':
+            $tasksList = [
+                ["key" => "email_triage", "name" => "Live Email Inbox Triage", "desc" => "Scan live Gmail/IMAP inbox for unread emails and extract action items", "category" => "Email"],
+                ["key" => "api_health", "name" => "API & Server Health Monitor", "desc" => "Ping live HTTP endpoints (mftechnologies, icapsq), verify response codes and latency", "category" => "Monitoring"],
+                ["key" => "system_resources", "name" => "System Resource Guardian", "desc" => "Audit live CPU utilization %, memory free/used, and root disk space", "category" => "System"],
+                ["key" => "calendar_sync", "name" => "Calendar & Agenda Synchronizer", "desc" => "Pull upcoming meetings from Google Calendar / iCal feed", "category" => "Schedule"],
+                ["key" => "ssl_check", "name" => "SSL Certificate Expiry Checker", "desc" => "Audit domain TLS handshake and calculate days before certificate expires", "category" => "Security"],
+                ["key" => "port_audit", "name" => "Open Ports & Listener Audit", "desc" => "Scan active local TCP listening ports and associated processes", "category" => "Network"],
+                ["key" => "log_audit", "name" => "Disk & Log File Auditor", "desc" => "Scan log directories for oversized log files (>5MB)", "category" => "Maintenance"],
+                ["key" => "process_watchdog", "name" => "Process Watchdog", "desc" => "Verify critical processes (python, php, cloudflared, nginx) are alive", "category" => "System"],
+                ["key" => "daily_report", "name" => "Daily Executive Standup Briefing", "desc" => "Generate markdown summary of active tasks and infrastructure health", "category" => "Reporting"],
+                ["key" => "email_alert", "name" => "Email Alert Dispatcher", "desc" => "Test live outbound SMTP alert transmission to configured recipient", "category" => "Alerts"]
+            ];
+            echo json_encode(["success" => true, "data" => $tasksList]);
+            break;
+
+        case 'run_automated_task':
+            $taskKey = preg_replace('/[^a-zA-Z0-9_]/', '', $input['task_key'] ?? '');
+            if (!$taskKey) {
+                echo json_encode(["success" => false, "error" => "task_key required"]);
+                break;
+            }
+            $pythonCmd = (DIRECTORY_SEPARATOR === '\\') ? "python" : "python3";
+            $script = $projectRoot . DIRECTORY_SEPARATOR . 'python' . DIRECTORY_SEPARATOR . 'tasks_engine.py';
+            $output = shell_exec("$pythonCmd \"$script\" $taskKey 2>&1");
+            
+            $jsonStart = strpos($output, '{');
+            $parsed = null;
+            if ($jsonStart !== false) {
+                $jsonStr = substr($output, $jsonStart);
+                $parsed = json_decode($jsonStr, true);
+            }
+
+            echo json_encode([
+                "success" => true,
+                "raw_output" => $output,
+                "result" => $parsed ?: ["message" => $output]
             ]);
             break;
 
@@ -117,7 +231,6 @@ try {
             break;
 
         case 'get_rules':
-            $cfg = loadConfig();
             echo json_encode(["success" => true, "data" => $cfg['rules'] ?? []]);
             break;
 
@@ -198,58 +311,6 @@ try {
             $upd = $pdo->prepare("UPDATE system_state SET value = ?, updated_at = CURRENT_TIMESTAMP WHERE key = 'notifications_mode'");
             $upd->execute([$mode]);
             echo json_encode(["success" => true, "mode" => $mode]);
-            break;
-
-        case 'save_imap':
-            $cfg = loadConfig();
-            $cfg['imap']['host'] = trim($input['host'] ?? '');
-            $cfg['imap']['port'] = (int)($input['port'] ?? 993);
-            $cfg['imap']['ssl'] = !empty($input['ssl']);
-            $cfg['imap']['username'] = trim($input['username'] ?? '');
-            if (!empty($input['password'])) {
-                $cfg['imap']['password'] = trim($input['password']);
-            }
-            $cfg['imap']['folder'] = trim($input['folder'] ?? 'INBOX') ?: 'INBOX';
-            saveConfig($cfg);
-            echo json_encode(["success" => true, "message" => "Configuration saved."]);
-            break;
-
-        case 'add_rule':
-            $cfg = loadConfig();
-            $rules = $cfg['rules'] ?? [];
-            $maxId = 0;
-            foreach ($rules as $r) {
-                if (isset($r['id']) && (int)$r['id'] > $maxId) $maxId = (int)$r['id'];
-            }
-            $subjKws = array_values(array_filter(array_map('trim', explode(',', $input['match_subject'] ?? ''))));
-            $senderKws = array_values(array_filter(array_map('trim', explode(',', $input['match_sender'] ?? ''))));
-
-            $newRule = [
-                "id" => $maxId + 1,
-                "name" => trim($input['name'] ?? 'Custom Rule'),
-                "match_subject" => $subjKws,
-                "match_sender" => $senderKws,
-                "action" => $input['rule_action'] ?? 'ask',
-                "target_priority" => strtoupper($input['target_priority'] ?? 'MEDIUM'),
-                "command" => trim($input['command'] ?? '')
-            ];
-            $cfg['rules'][] = $newRule;
-            saveConfig($cfg);
-            echo json_encode(["success" => true, "message" => "Rule created."]);
-            break;
-
-        case 'delete_rule':
-            $id = (int)($input['id'] ?? 0);
-            $cfg = loadConfig();
-            $rules = $cfg['rules'] ?? [];
-            $filtered = [];
-            foreach ($rules as $r) {
-                if (isset($r['id']) && (int)$r['id'] === $id) continue;
-                $filtered[] = $r;
-            }
-            $cfg['rules'] = array_values($filtered);
-            saveConfig($cfg);
-            echo json_encode(["success" => true, "message" => "Rule removed."]);
             break;
 
         default:

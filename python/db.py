@@ -1,6 +1,7 @@
 """
 Database schema and connection manager for the Assistant.
-Cross-platform support for Linux and Windows.
+Includes tables for emails, daily tasks, notification rules, and security microservice telemetry.
+Cross-platform support for Linux and Windows with zero emojis.
 """
 
 import os
@@ -71,6 +72,27 @@ def init_db():
         message TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
+
+    -- Security Microservice: Unauthorized Access & Anomaly Tracking
+    CREATE TABLE IF NOT EXISTS security_events (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        event_type TEXT NOT NULL,
+        source_ip TEXT,
+        endpoint TEXT,
+        severity TEXT DEFAULT 'MEDIUM',
+        details TEXT,
+        user_agent TEXT,
+        blocked INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS security_ip_reputation (
+        ip TEXT PRIMARY KEY,
+        failed_attempts INTEGER DEFAULT 0,
+        is_blocked INTEGER DEFAULT 0,
+        first_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
     """)
 
     cursor.execute("""
@@ -79,11 +101,11 @@ def init_db():
     """)
     cursor.execute("""
         INSERT OR IGNORE INTO system_state (key, value)
-        VALUES ('last_notifications_off_timestamp', '')
+        VALUES ('security_monitoring_active', '1')
     """)
     cursor.execute("""
         INSERT OR IGNORE INTO system_state (key, value)
-        VALUES ('last_sync_timestamp', '')
+        VALUES ('security_api_token', 'ast_sec_token_prod_9821')
     """)
 
     conn.commit()
@@ -91,4 +113,4 @@ def init_db():
 
 if __name__ == "__main__":
     init_db()
-    print(f"[+] Database initialized at: {DB_PATH}")
+    print(f"[+] Database initialized with security tables at: {DB_PATH}")
