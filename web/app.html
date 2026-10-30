@@ -1,0 +1,1670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BenNeta - Intelligence & Automation</title>
+    <!-- Favicons and App Assets -->
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+    <link rel="manifest" href="/assets/site.webmanifest">
+    <meta name="theme-color" content="#d97757">
+    <link rel="stylesheet" href="/assets/theme.css">
+    <style>
+        :root {
+            --bg-window: #eef1f6;
+            --bg-sidebar: #ffffff;
+            --bg-canvas: #fafbfc;
+            --bg-container: #f4f6fa;
+            --bg-card: #ffffff;
+            --border-subtle: #edf0f5;
+            --border-card: #e5e9f0;
+            --border-hover: #d5dbe6;
+
+            --text-heading: #10141a;
+            --text-body: #374151;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
+            --text-light: #c2c9d4;
+
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --primary-light: #eef2ff;
+            
+            --pill-black: #0f172a;
+            --pill-black-hover: #1e293b;
+
+            --accent-purple: #8b5cf6;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-card: 0 4px 20px -2px rgba(16, 24, 40, 0.05);
+            --shadow-floating: 0 12px 32px -4px rgba(16, 24, 40, 0.08);
+
+            --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-family);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-window);
+            color: var(--text-body);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 1.25rem;
+        }
+
+        .app-window {
+            width: 100%;
+            height: 100%;
+            max-width: 1560px;
+            background: var(--bg-canvas);
+            border-radius: 20px;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(0,0,0,0.06);
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 250px;
+            min-width: 250px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem 1.25rem;
+            justify-content: space-between;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .brand-logo-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #818cf8 0%, #6366f1 50%, #4338ca 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-heading);
+            letter-spacing: -0.2px;
+        }
+
+        .brand-sub {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            letter-spacing: 0.2px;
+        }
+
+        .btn-new-chat {
+            background: var(--pill-black);
+            color: #ffffff;
+            border: none;
+            border-radius: 9999px;
+            padding: 0.7rem 1.25rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 1.5rem;
+            transition: background 0.15s ease, transform 0.1s ease;
+        }
+
+        .btn-new-chat:hover {
+            background: var(--pill-black-hover);
+            transform: translateY(-1px);
+        }
+
+        .nav-section-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.6px;
+            margin-bottom: 0.5rem;
+            padding-left: 0.5rem;
+        }
+
+        .nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.84rem;
+            font-weight: 500;
+            color: var(--text-body);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .nav-item:hover {
+            background: #f8fafc;
+            color: var(--text-heading);
+        }
+
+        .nav-item.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-item svg {
+            width: 17px;
+            height: 17px;
+            stroke-width: 2;
+            color: var(--text-secondary);
+        }
+
+        .nav-item.active svg {
+            color: var(--primary);
+        }
+
+        .topics-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .topic-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.4rem 0.75rem;
+            font-size: 0.82rem;
+            color: var(--text-body);
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .topic-item:hover {
+            background: #f8fafc;
+        }
+
+        .topic-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* Sidebar bottom user info card */
+        .sidebar-bottom {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 1rem;
+        }
+
+        .user-card {
+            background: #f9fafb;
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 0.6rem 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #e0e7ff;
+            color: #4338ca;
+            font-size: 0.78rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-names {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-heading);
+        }
+
+        .user-email {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+        }
+
+        .credits-pill {
+            background: #ffffff;
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 0.45rem 0.75rem;
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Main Canvas Styling */
+        .main-canvas {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            position: relative;
+            background: var(--bg-canvas);
+        }
+
+        .top-navbar {
+            padding: 1.25rem 2.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        .search-pill-top {
+            background: #ffffff;
+            border: 1px solid var(--border-card);
+            border-radius: 9999px;
+            padding: 0.45rem 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            width: 220px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .search-pill-top input {
+            border: none;
+            outline: none;
+            background: transparent;
+            width: 100%;
+            font-size: 0.8rem;
+            color: var(--text-body);
+        }
+
+        .kbd-badge {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 0.1rem 0.35rem;
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .btn-ghost-icon {
+            background: #ffffff;
+            border: 1px solid var(--border-card);
+            border-radius: 9999px;
+            padding: 0.45rem 0.85rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-body);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.15s ease;
+        }
+
+        .btn-ghost-icon:hover {
+            border-color: var(--border-hover);
+            background: #f8fafc;
+        }
+
+        .content-scroll {
+            padding: 0 2.25rem 6.5rem 2.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .hero-section {
+            margin-top: 0.25rem;
+        }
+
+        .hero-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-heading);
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+
+        .hero-sub {
+            font-size: 2rem;
+            font-weight: 300;
+            color: var(--text-light);
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+            margin-top: 0.15rem;
+        }
+
+        .workspaces-section {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .workspaces-label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-heading);
+        }
+
+        .workspaces-pills {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .pill-tab {
+            background: transparent;
+            border: none;
+            border-radius: 9999px;
+            padding: 0.45rem 1rem;
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .pill-tab:hover {
+            color: var(--text-heading);
+            background: #f1f5f9;
+        }
+
+        .pill-tab.active {
+            background: var(--primary);
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.28);
+        }
+
+        .cards-container-wrapper {
+            background: var(--bg-container);
+            border-radius: 20px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .section-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .section-header-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-heading);
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .app-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 18px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 160px;
+            box-shadow: var(--shadow-card);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .app-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px -4px rgba(16, 24, 40, 0.08);
+        }
+
+        .card-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-icon-box {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-icon-box.purple { background: rgba(139, 92, 246, 0.1); color: var(--accent-purple); }
+        .card-icon-box.cyan { background: rgba(6, 182, 212, 0.1); color: var(--accent-cyan); }
+        .card-icon-box.red { background: rgba(239, 68, 68, 0.1); color: var(--accent-red); }
+        .card-icon-box.green { background: rgba(16, 185, 129, 0.1); color: var(--accent-green); }
+
+        .card-title {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: var(--text-heading);
+            line-height: 1.35;
+            margin-bottom: 0.5rem;
+        }
+
+        .badge-priority {
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+        }
+        .badge-prio-high { background: #fee2e2; color: #dc2626; }
+        .badge-prio-med  { background: #fef3c7; color: #d97706; }
+        .badge-prio-low  { background: #dcfce7; color: #16a34a; }
+        .badge-spam      { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
+        .badge-promo     { background: #fef3c7; color: #92400e; }
+
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: auto;
+            padding-top: 0.75rem;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .btn-card-action {
+            padding: 0.35rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-card-allow { background: #eef2ff; color: #4f46e5; }
+        .btn-card-allow:hover { background: #e0e7ff; }
+
+        .btn-card-dismiss { background: #f1f5f9; color: #64748b; }
+        .btn-card-dismiss:hover { background: #fee2e2; color: #dc2626; }
+
+        .modern-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.85rem;
+        }
+
+        .modern-table th {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border-card);
+        }
+
+        .modern-table td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--text-body);
+            background: #ffffff;
+        }
+
+        .task-done-title {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        /* Floating Pill Input Bar */
+        .bottom-floating-bar {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 2.25rem;
+            right: 2.25rem;
+            background: #ffffff;
+            border: 1px solid var(--border-card);
+            border-radius: 9999px;
+            padding: 0.65rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: var(--shadow-floating);
+            z-index: 50;
+        }
+
+        .bottom-floating-bar input {
+            border: none;
+            outline: none;
+            width: 100%;
+            font-size: 0.86rem;
+            color: var(--text-body);
+            background: transparent;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        .modal.active { display: flex; }
+
+        .modal-body {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            max-width: 860px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 1.75rem;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .form-group label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .form-group input, .form-group select {
+            border: 1px solid var(--border-card);
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        .log-toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: #0f172a;
+            color: #ffffff;
+            border-radius: 10px;
+            padding: 0.75rem 1.25rem;
+            font-size: 0.82rem;
+            font-weight: 500;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            display: none;
+            z-index: 2000;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="log-toast" id="toast"></div>
+
+    <div class="app-window">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div>
+                <!-- Brand / Logo: BenNeta with Claude Starburst Glyph -->
+                <div class="sidebar-brand">
+                    <div class="brand-logo-icon" style="background: transparent; border-radius: 8px;">
+                        <svg width="34" height="34" viewBox="0 0 32 32" fill="none">
+                            <rect width="32" height="32" rx="8" fill="#d97757"/>
+                            <g transform="translate(16, 16)">
+                                <line x1="0" y1="-9" x2="0" y2="9" stroke="#ffffff" stroke-width="2.8" stroke-linecap="round"/>
+                                <line x1="-9" y1="0" x2="9" y2="0" stroke="#ffffff" stroke-width="2.8" stroke-linecap="round"/>
+                                <line x1="-6.5" y1="-6.5" x2="6.5" y2="6.5" stroke="#ffffff" stroke-width="2.8" stroke-linecap="round"/>
+                                <line x1="-6.5" y1="6.5" x2="6.5" y2="-6.5" stroke="#ffffff" stroke-width="2.8" stroke-linecap="round"/>
+                            </g>
+                        </svg>
+                    </div>
+                    <div class="brand-text">
+                        <span class="brand-title">BenNeta</span>
+                        <span class="brand-sub">Intelligence & Automation</span>
+                    </div>
+                </div>
+
+                <button class="btn-new-chat" onclick="openModal('add-task-modal')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    <span>New task</span>
+                </button>
+
+                <div class="nav-section-title">Main</div>
+                <ul class="nav-list">
+                    <li class="nav-item active" id="nav-gmail" onclick="setTab('gmail')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline>
+                            <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
+                        </svg>
+                        <span>Today's Gmail</span>
+                    </li>
+                    <li class="nav-item" id="nav-security" onclick="setTab('security')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                        <span>Security Sentinel</span>
+                    </li>
+                    <li class="nav-item" id="nav-automated" onclick="setTab('automated')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                        </svg>
+                        <span>Automated Tasks</span>
+                    </li>
+                    <li class="nav-item" id="nav-pending" onclick="setTab('pending')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        <span>Approvals</span>
+                    </li>
+                    <li class="nav-item" id="nav-tasks" onclick="setTab('tasks')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        <span>Daily tasks</span>
+                    </li>
+                    <li class="nav-item" id="nav-usage" onclick="setTab('usage')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <line x1="18" y1="20" x2="18" y2="10"></line>
+                            <line x1="12" y1="20" x2="12" y2="4"></line>
+                            <line x1="6" y1="20" x2="6" y2="14"></line>
+                        </svg>
+                        <span>Usage & Analytics</span>
+                    </li>
+                    <li class="nav-item" id="nav-download" onclick="window.location.href='/download.html'">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        <span style="color: var(--color-primary); font-weight: 600;">Download .deb / .exe</span>
+                    </li>
+                </ul>
+
+                <div class="nav-section-title">Topics</div>
+                <ul class="topics-list">
+                    <li class="topic-item" onclick="setTab('security')">
+                        <span class="topic-dot" style="background: var(--accent-red);"></span>
+                        <span>API Intrusions</span>
+                    </li>
+                    <li class="topic-item" onclick="setTab('gmail')">
+                        <span class="topic-dot" style="background: var(--accent-purple);"></span>
+                        <span>Spam & Phishing</span>
+                    </li>
+                    <li class="topic-item" onclick="setTab('automated')">
+                        <span class="topic-dot" style="background: var(--accent-green);"></span>
+                        <span>Server Health</span>
+                    </li>
+                    <li class="topic-item" onclick="setTab('usage')">
+                        <span class="topic-dot" style="background: var(--color-primary);"></span>
+                        <span>RAM Budget (<28MB)</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="sidebar-bottom">
+                <div class="user-card" onclick="openModal('gmail-modal')">
+                    <div class="user-info">
+                        <div class="user-avatar" id="avatar-initials">M</div>
+                        <div class="user-names">
+                            <span class="user-name" id="user-display-name">Musa</span>
+                            <span class="user-email" id="user-display-email">musamwange2@gmail.com</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="credits-pill">
+                    <span id="credits-status-text">Security: Active (0 Blocks)</span>
+                    <button class="btn-ghost-icon" style="padding: 0.15rem 0.4rem; font-size: 0.68rem;" onclick="toggleDnd()">Toggle DND</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CANVAS -->
+        <main class="main-canvas">
+            <header class="top-navbar">
+                <div class="search-pill-top">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" placeholder="Search..." oninput="handleSearch(this.value)">
+                    <span class="kbd-badge">K</span>
+                </div>
+                <span class="ram-badge ok" id="header-ram-pill">RAM: 14.2 MB / 28 MB MAX</span>
+                <button class="btn-ghost-icon" onclick="fetchTodaysGmail()">Scan Today's Inbox</button>
+                <button class="btn-ghost-icon" id="header-dnd-badge" onclick="toggleDnd()">DND: OFF</button>
+                <button class="btn-ghost-icon" onclick="toggleTheme()" id="theme-toggle-btn">Theme</button>
+                <a href="/download.html" class="btn-ghost-icon" style="text-decoration:none; color: var(--color-primary); font-weight:600;">Download</a>
+            </header>
+
+            <div class="content-scroll">
+                <section class="hero-section">
+                    <h1 class="hero-title" id="greeting-title">Hello, Musa</h1>
+                    <div class="hero-sub">How I can help you?</div>
+                </section>
+
+                <section class="workspaces-section">
+                    <div class="workspaces-label">Workspaces</div>
+                    <div class="workspaces-pills">
+                        <button class="pill-tab active" onclick="switchWorkspace('gmail', this)">Today's Inbox</button>
+                        <button class="pill-tab" onclick="switchWorkspace('security', this)">API Security Sentinel</button>
+                        <button class="pill-tab" onclick="switchWorkspace('automated', this)">10 Automated Tasks</button>
+                        <button class="pill-tab" onclick="switchWorkspace('pending', this)">Task Approvals</button>
+                        <button class="pill-tab" onclick="switchWorkspace('tasks', this)">Daily Tasks</button>
+                        <button class="pill-tab" onclick="switchWorkspace('usage', this)">Usage &amp; Analytics</button>
+                    </div>
+                </section>
+
+                <div class="cards-container-wrapper">
+                    <!-- SECTION 1: TODAY'S GMAIL INBOX & SPAM DETECTOR -->
+                    <div id="view-gmail" class="view-panel">
+                        <div class="section-header-row" style="margin-bottom: 1rem;">
+                            <div>
+                                <div class="section-header-title">Live Gmail (musamwange2@gmail.com) - Today's Inbox</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">Multi-factor spam, phishing, and promotional email classifier</div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn-ghost-icon" onclick="openModal('gmail-modal')">Gmail Password</button>
+                                <button class="btn-ghost-icon" onclick="fetchTodaysGmail()">Refresh Today's Emails</button>
+                            </div>
+                        </div>
+
+                        <div class="cards-grid" id="gmail-cards-grid">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- SECTION 2: API SECURITY & ANOMALY MICROSERVICE -->
+                    <div id="view-security" class="view-panel" style="display: none;">
+                        <div class="section-header-row" style="margin-bottom: 1rem;">
+                            <div>
+                                <div class="section-header-title">API Security Microservice - Anomaly & Intrusion Monitor</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">Detects unauthorized access, SQLi, path traversal, rate spikes, and behavioral anomalies</div>
+                            </div>
+                            <button class="btn-ghost-icon" onclick="triggerSecurityTest()">Simulate Exploit Probe</button>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+                            <div style="background: #ffffff; padding: 1rem; border-radius: 12px; border: 1px solid var(--border-card);">
+                                <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">TOTAL API INSPECTIONS</div>
+                                <div id="sec-total-events" style="font-size: 1.5rem; font-weight: 700; color: var(--text-heading); margin-top: 0.2rem;">0</div>
+                            </div>
+                            <div style="background: #ffffff; padding: 1rem; border-radius: 12px; border: 1px solid var(--border-card);">
+                                <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">CRITICAL INTRUSIONS</div>
+                                <div id="sec-critical-threats" style="font-size: 1.5rem; font-weight: 700; color: var(--accent-red); margin-top: 0.2rem;">0</div>
+                            </div>
+                            <div style="background: #ffffff; padding: 1rem; border-radius: 12px; border: 1px solid var(--border-card);">
+                                <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">BLOCKED IP ADDRESSES</div>
+                                <div id="sec-blocked-ips" style="font-size: 1.5rem; font-weight: 700; color: var(--accent-purple); margin-top: 0.2rem;">0</div>
+                            </div>
+                        </div>
+
+                        <table class="modern-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 140px;">Timestamp</th>
+                                    <th style="width: 160px;">Incident Type</th>
+                                    <th style="width: 110px;">Source IP</th>
+                                    <th style="width: 80px;">Severity</th>
+                                    <th>Details & Endpoint</th>
+                                </tr>
+                            </thead>
+                            <tbody id="security-events-tbody"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- SECTION 3: 10 AUTOMATED TASKS ENGINE -->
+                    <div id="view-automated" class="view-panel" style="display: none;">
+                        <div class="section-header-row" style="margin-bottom: 1rem;">
+                            <div>
+                                <div class="section-header-title">10 Automated System & Infrastructure Tasks</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">Live execution engine across APIs, server health, SSL, logs, calendar, and system</div>
+                            </div>
+                        </div>
+
+                        <div class="cards-grid" id="automated-tasks-grid"></div>
+                    </div>
+
+                    <!-- SECTION 4: APPROVALS -->
+                    <div id="view-pending" class="view-panel" style="display: none;">
+                        <div class="section-header-row" style="margin-bottom: 1rem;">
+                            <div class="section-header-title">Pending Approvals Queue</div>
+                        </div>
+                        <div class="cards-grid" id="pending-cards-grid"></div>
+                    </div>
+
+                    <!-- SECTION 5: DAILY TASKS -->
+                    <div id="view-tasks" class="view-panel" style="display: none;">
+                        <div class="section-header-row" style="margin-bottom: 1rem;">
+                            <div class="section-header-title">Daily tasks board</div>
+                            <button class="btn-ghost-icon" onclick="openModal('add-task-modal')">+ Add task</button>
+                        </div>
+                        <table class="modern-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px;"></th>
+                                    <th style="width: 80px;">Priority</th>
+                                    <th>Task title & details</th>
+                                    <th style="width: 140px;">Due date</th>
+                                    <th style="width: 80px;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tasks-table-body"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- SECTION 6: USAGE, COOKIES & TELEMETRY -->
+                    <div id="view-usage" class="view-panel" style="display: none;">
+                        <div class="app-card" style="margin-bottom: 1.25rem;">
+                            <div class="section-header-row" style="margin-bottom: 1.25rem;">
+                                <div>
+                                    <div class="section-header-title">Usage Analytics &amp; Memory Guardian</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">
+                                        Telemetry collected locally on your machine &bull; Strict 28MB RAM budget enforced
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn-ghost-icon" onclick="exportUserData()">Export Data (JSON)</button>
+                                    <button class="btn-ghost-icon" onclick="clearUsageTelemetry()" style="color: var(--accent-red);">Purge Telemetry</button>
+                                    <button class="btn-ghost-icon" onclick="loadUsageData()">Refresh</button>
+                                </div>
+                            </div>
+
+                            <!-- Real-time RAM Budget Gauge -->
+                            <div style="background: var(--bg-container); border: 1px solid var(--border-card); border-radius: 12px; padding: 1.25rem; margin-bottom: 1.25rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                    <span style="font-weight: 700; font-size: 0.88rem; color: var(--text-heading);">Resident Memory Footprint (RAM)</span>
+                                    <span id="usage-ram-text" style="font-family: monospace; font-weight: 700; font-size: 0.88rem; color: #10b981;">Checking RAM...</span>
+                                </div>
+                                <div style="background: #e2e8f0; height: 10px; border-radius: 5px; overflow: hidden;">
+                                    <div id="usage-ram-bar" style="background: #10b981; height: 100%; width: 50%; transition: width 0.3s ease;"></div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); margin-top: 0.4rem;">
+                                    <span>0 MB</span>
+                                    <span>Warning: 24 MB</span>
+                                    <span>Strict Cap: 28 MB</span>
+                                </div>
+                            </div>
+
+                            <!-- KPI Cards -->
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+                                <div style="background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 10px; padding: 1rem; text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: 800; color: var(--primary);" id="kpi-total-actions">0</div>
+                                    <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-top: 0.3rem;">Actions Today</div>
+                                </div>
+                                <div style="background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 10px; padding: 1rem; text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: 800; color: #10b981;" id="kpi-emails-triaged">0</div>
+                                    <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-top: 0.3rem;">Emails Triaged</div>
+                                </div>
+                                <div style="background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 10px; padding: 1rem; text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: 800; color: #ef4444;" id="kpi-threats-blocked">0</div>
+                                    <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-top: 0.3rem;">Threats Blocked</div>
+                                </div>
+                                <div style="background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 10px; padding: 1rem; text-align: center;">
+                                    <div style="font-size: 1.5rem; font-weight: 800; color: #f59e0b;" id="kpi-tasks-run">0</div>
+                                    <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-top: 0.3rem;">Tasks Executed</div>
+                                </div>
+                            </div>
+
+                            <!-- Recent Activity Telemetry Table -->
+                            <div class="section-header-title" style="margin-bottom: 0.5rem;">Recent Assistant Telemetry Log</div>
+                            <table class="modern-table">
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>Category</th>
+                                        <th>Action Name</th>
+                                        <th>Status</th>
+                                        <th>Duration</th>
+                                        <th>RAM (MB)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usage-telemetry-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Floating Prompt Bar -->
+            <div class="bottom-floating-bar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" placeholder="Ask or search for anything use @ to tag a specific assistant" onkeydown="handleBottomInput(event)">
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: GMAIL APP PASSWORD SETUP -->
+    <div id="gmail-modal" class="modal">
+        <div class="modal-body" style="max-width: 520px;">
+            <div class="modal-header">
+                <div class="modal-title">Gmail Connection (musamwange2@gmail.com)</div>
+                <button class="btn-ghost-icon" onclick="closeModal('gmail-modal')">Close</button>
+            </div>
+            <form onsubmit="saveGmailAuth(event)">
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <label>Gmail Address</label>
+                    <input type="text" id="gmail-user-input" value="musamwange2@gmail.com" readonly style="background: #f1f5f9;">
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Google 16-Character App Password</label>
+                    <input type="password" id="gmail-pass-input" placeholder="e.g. abcd efgh ijkl mnop" required>
+                    <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.35rem;">
+                        To generate: Go to myaccount.google.com -> Security -> 2-Step Verification -> App Passwords.
+                    </div>
+                </div>
+                <button type="submit" class="btn-new-chat" style="margin-bottom: 0;">Save & Connect Live</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD MANUAL TASK -->
+    <div id="add-task-modal" class="modal">
+        <div class="modal-body" style="max-width: 480px;">
+            <div class="modal-header">
+                <div class="modal-title">Create daily task</div>
+                <button class="btn-ghost-icon" onclick="closeModal('add-task-modal')">Close</button>
+            </div>
+            <form onsubmit="createDailyTask(event)">
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <label>Task title</label>
+                    <input type="text" id="manual-title" placeholder="e.g. Audit server API health" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <label>Priority</label>
+                    <select id="manual-prio">
+                        <option value="HIGH">[HIGH]</option>
+                        <option value="MEDIUM" selected>[MEDIUM]</option>
+                        <option value="LOW">[LOW]</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 1.25rem;">
+                    <label>Due date / time</label>
+                    <input type="text" id="manual-due" placeholder="Today 5:00 PM">
+                </div>
+                <button type="submit" class="btn-new-chat" style="margin-bottom: 0;">Add task</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: BRAVE RESEARCH & DRAFT REPLY -->
+    <div id="reply-modal" class="modal">
+        <div class="modal-body" style="max-width: 680px;">
+            <div class="modal-header">
+                <div>
+                    <div class="modal-title">BenNeta Research & Draft Reply</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">Powered by Brave Search API live intelligence</div>
+                </div>
+                <button class="btn-ghost-icon" onclick="closeModal('reply-modal')">Close</button>
+            </div>
+            <div style="margin-bottom: 0.8rem;">
+                <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">RECIPIENT</div>
+                <div id="reply-modal-recipient" style="font-weight: 600; font-size: 0.85rem; color: var(--text-heading); margin-top: 0.15rem;"></div>
+            </div>
+            <div style="margin-bottom: 0.8rem;">
+                <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">SUBJECT</div>
+                <div id="reply-modal-subject" style="font-weight: 600; font-size: 0.85rem; color: var(--text-heading); margin-top: 0.15rem;"></div>
+            </div>
+            <div style="margin-bottom: 0.8rem;">
+                <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; margin-bottom: 0.35rem;">BRAVE SEARCH INTELLIGENCE FINDINGS</div>
+                <div id="reply-modal-research" style="max-height: 140px; overflow-y: auto; background: #f8fafc; border: 1px solid var(--border-card); border-radius: 8px; padding: 0.6rem; font-size: 0.75rem;"></div>
+            </div>
+            <div class="form-group" style="margin-bottom: 1rem;">
+                <label>Response draft</label>
+                <textarea id="reply-modal-body" rows="8" style="width: 100%; border: 1px solid var(--border-card); border-radius: 8px; padding: 0.6rem; font-family: monospace; font-size: 0.82rem; line-height: 1.45; resize: vertical;"></textarea>
+            </div>
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                <button class="btn-ghost-icon" onclick="copyReplyDraft()">Copy reply to clipboard</button>
+                <button class="btn-new-chat" style="margin-bottom: 0;" onclick="closeModal('reply-modal'); showToast('Draft saved in BenNeta outbox.');">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 4000);
+        }
+
+        async function init() {
+            await fetchStatus();
+            await fetchTodaysGmail();
+            await loadSecurityTelemetry();
+            await loadAutomatedTasks();
+            await loadDailyTasks();
+        }
+
+        async function fetchStatus() {
+            try {
+                const res = await fetch('api.php?action=status');
+                const data = await res.json();
+                if (data.status === 'SUCCESS' || data.success) {
+                    document.getElementById('greeting-title').innerText = `Hello, ${data.user_name || 'Musa'}`;
+                    document.getElementById('user-display-name').innerText = data.user_name || 'Musa';
+                    document.getElementById('user-display-email').innerText = data.user_email || 'musamwange2@gmail.com';
+                    document.getElementById('avatar-initials').innerText = (data.user_name || 'M').charAt(0);
+
+                    const dndBadge = document.getElementById('header-dnd-badge');
+                    dndBadge.innerText = data.notifications_mode === 'OFF' ? 'DND: ON (QUIET)' : 'DND: OFF (ACTIVE)';
+                    dndBadge.style.color = data.notifications_mode === 'OFF' ? '#ef4444' : '#10b981';
+
+                    document.getElementById('credits-status-text').innerText = `Security: Active (${data.blocked_ips || 0} Banned)`;
+
+                    if (data.ram_status) {
+                        const r = data.ram_status;
+                        const pill = document.getElementById('header-ram-pill');
+                        if (pill) {
+                            pill.innerText = `RAM: ${r.rss_mb} MB / 28 MB MAX`;
+                            pill.className = 'ram-badge ' + (r.rss_mb >= 28 ? 'alert' : (r.rss_mb >= 24 ? 'warning' : 'ok'));
+                        }
+                    }
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadUsageData() {
+            try {
+                const res = await fetch('api.php?action=get_usage_data');
+                const data = await res.json();
+                if (data.status === 'SUCCESS') {
+                    // Update RAM Gauge
+                    if (data.ram_audit) {
+                        const r = data.ram_audit;
+                        const ramText = document.getElementById('usage-ram-text');
+                        const ramBar = document.getElementById('usage-ram-bar');
+                        if (ramText && ramBar) {
+                            ramText.innerText = `${r.rss_mb} MB / 28.0 MB (${r.percent_used}%)`;
+                            ramBar.style.width = Math.min(100, r.percent_used) + '%';
+                            ramBar.style.background = (r.rss_mb >= 28) ? '#ef4444' : (r.rss_mb >= 24 ? '#f59e0b' : '#10b981');
+                            ramText.style.color = ramBar.style.background;
+                        }
+                    }
+
+                    // Update KPIs
+                    document.getElementById('kpi-total-actions').innerText = data.total_actions_today || 0;
+                    
+                    let emailCount = 0, threatCount = 0, taskCount = 0;
+                    if (data.categories) {
+                        data.categories.forEach(c => {
+                            if (c.category === 'email') emailCount += parseInt(c.count);
+                            if (c.category === 'security') threatCount += parseInt(c.count);
+                            if (c.category === 'task') taskCount += parseInt(c.count);
+                        });
+                    }
+                    document.getElementById('kpi-emails-triaged').innerText = emailCount;
+                    document.getElementById('kpi-threats-blocked').innerText = threatCount;
+                    document.getElementById('kpi-tasks-run').innerText = taskCount;
+
+                    // Render Telemetry Table
+                    const tbody = document.getElementById('usage-telemetry-body');
+                    if (tbody && data.recent_activity) {
+                        if (data.recent_activity.length === 0) {
+                            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:1rem;">No telemetry recorded yet today.</td></tr>';
+                        } else {
+                            tbody.innerHTML = data.recent_activity.map(row => `
+                                <tr>
+                                    <td style="font-family:monospace; font-size:0.75rem; color:var(--text-muted);">${escapeHtml(row.created_at)}</td>
+                                    <td><span class="badge" style="background:var(--bg-container);">${escapeHtml(row.category)}</span></td>
+                                    <td style="font-weight:600; color:var(--text-heading);">${escapeHtml(row.action_name || row.event_type)}</td>
+                                    <td><span style="color:${row.status === 'success' ? '#10b981' : '#ef4444'}; font-weight:600;">${escapeHtml(row.status)}</span></td>
+                                    <td style="font-family:monospace; font-size:0.75rem;">${row.duration_ms} ms</td>
+                                    <td style="font-family:monospace; font-size:0.75rem; color:#10b981;">${row.ram_usage_mb} MB</td>
+                                </tr>
+                            `).join('');
+                        }
+                    }
+                }
+            } catch (e) { console.error('Error loading usage data:', e); }
+        }
+
+        function exportUserData() {
+            window.location.href = 'api.php?action=export_data';
+            showToast('Downloading complete user data export (JSON)...');
+        }
+
+        async function clearUsageTelemetry() {
+            if (!confirm('Are you sure you want to clear your local usage history?')) return;
+            try {
+                const res = await fetch('api.php?action=clear_data', {method: 'POST'});
+                const data = await res.json();
+                if (data.status === 'SUCCESS') {
+                    showToast('Usage telemetry cleared.');
+                    loadUsageData();
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme') || 'dark';
+            const next = (current === 'dark') ? 'light' : 'dark';
+            html.setAttribute('data-theme', next);
+            document.getElementById('theme-toggle-btn').innerText = `Theme: ${next.toUpperCase()}`;
+            showToast(`Theme switched to ${next.toUpperCase()}`);
+            fetch('api.php?action=save_preferences', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({theme: next})
+            }).catch(() => {});
+        }
+
+        window.cachedEmails = [];
+
+        function renderEmailCards(emails) {
+            const grid = document.getElementById('gmail-cards-grid');
+            if (!emails || emails.length === 0) {
+                grid.innerHTML = `
+                    <div class="app-card app-card-blank" onclick="fetchTodaysGmail()" style="grid-column: span 2;">
+                        <div style="text-align: center;">
+                            <div style="font-weight: 600;">No matching emails found</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.3rem;">Mailbox connected: musamwange2@gmail.com</div>
+                            <button class="btn-ghost-icon" style="margin-top: 0.6rem;" onclick="fetchTodaysGmail()">Refresh Inbox</button>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = emails.map((em, idx) => {
+                const isSpam = em.is_spam;
+                const isPromo = em.is_promo;
+                let badgeHtml = '';
+                if (isSpam) {
+                    badgeHtml = `<span class="badge-priority badge-spam">[SPAM DETECTED: ${em.spam_score}/100]</span>`;
+                } else if (isPromo) {
+                    badgeHtml = `<span class="badge-priority badge-promo">[PROMOTION]</span>`;
+                } else if (em.task) {
+                    badgeHtml = `<span class="badge-priority badge-prio-high">[ACTIONABLE TASK]</span>`;
+                } else {
+                    badgeHtml = `<span class="badge-priority badge-prio-low">[CLEAN INBOX]</span>`;
+                }
+
+                return `
+                    <div class="app-card" style="${isSpam ? 'border-color: #fca5a5;' : ''}">
+                        <div class="card-top">
+                            <div class="card-icon-box ${isSpam ? 'red' : (em.task ? 'purple' : 'green')}">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline>
+                                    <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
+                                </svg>
+                            </div>
+                            <div style="font-size: 0.72rem; color: var(--text-muted);">${escapeHtml(em.date)}</div>
+                        </div>
+
+                        <div class="card-title" title="${escapeHtml(em.subject)}">${escapeHtml(em.subject)}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.5rem; word-break: break-all;">From: <strong>${escapeHtml(em.sender)}</strong></div>
+
+                        <div style="margin-bottom: 0.6rem;">${badgeHtml}</div>
+
+                        ${em.spam_reasons && em.spam_reasons.length > 0 ? 
+                            `<div style="font-size: 0.72rem; color: #b91c1c; margin-bottom: 0.5rem;">Reasons: ${escapeHtml(em.spam_reasons.join(', '))}</div>` : ''}
+
+                        <div class="card-footer" style="flex-wrap: wrap; gap: 0.35rem; align-items: center;">
+                            ${em.task ? 
+                                `<button class="btn-card-action btn-card-allow" onclick="quickAllowTask('${escapeHtml(em.task.title)}')">Add to Tasks</button>` : ''}
+                            <button class="btn-ghost-icon" style="padding: 0.25rem 0.5rem; font-size: 0.72rem;" onclick="draftReplyForEmail(${idx})">Draft Reply (Brave AI)</button>
+                            <button class="btn-ghost-icon" style="padding: 0.25rem 0.5rem; font-size: 0.72rem;" onclick="watchSender('${escapeHtml(em.sender)}')">Keep Eye On</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function fetchTodaysGmail() {
+            setTab('gmail');
+            const grid = document.getElementById('gmail-cards-grid');
+            grid.innerHTML = '<div style="padding: 1.5rem; color: var(--text-muted);">Connecting to Gmail (musamwange2@gmail.com)...</div>';
+
+            try {
+                const res = await fetch('api.php?action=get_gmail_today');
+                const json = await res.json();
+                const data = json.data;
+
+                if (data.status === 'AUTH_REQUIRED') {
+                    grid.innerHTML = `
+                        <div class="app-card" style="grid-column: span 2; border-left: 4px solid var(--accent-orange);">
+                            <div class="card-title">Gmail Connection: App Password Required</div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                                Google requires an App Password for IMAP access on <strong>musamwange2@gmail.com</strong>.
+                            </div>
+                            <button class="btn-card-action btn-card-allow" style="padding: 0.5rem 1rem;" onclick="openModal('gmail-modal')">Enter App Password</button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                window.cachedEmails = data.emails || [];
+                renderEmailCards(window.cachedEmails);
+                showToast(`Retrieved ${window.cachedEmails.length} emails from today's inbox.`);
+            } catch (e) {
+                console.error(e);
+                grid.innerHTML = '<div style="padding: 1.5rem; color: #ef4444;">Error connecting to mailbox. Click Refresh to retry.</div>';
+            }
+        }
+
+        function handleSearch(query) {
+            setTab('gmail');
+            const q = (query || '').toLowerCase().trim();
+            if (!q) {
+                renderEmailCards(window.cachedEmails);
+                return;
+            }
+            const filtered = (window.cachedEmails || []).filter(em => {
+                const s = (em.subject || '').toLowerCase();
+                const from = (em.sender || '').toLowerCase();
+                const taskT = (em.task && em.task.title ? em.task.title : '').toLowerCase();
+                return s.includes(q) || from.includes(q) || taskT.includes(q);
+            });
+            renderEmailCards(filtered);
+        }
+
+        async function draftReplyForEmail(idx) {
+            const em = (window.cachedEmails || [])[idx];
+            if (!em) return;
+
+            showToast('Querying Brave Search API & preparing response draft...');
+            try {
+                const res = await fetch('api.php?action=research_and_draft_reply', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        subject: em.subject,
+                        sender: em.sender,
+                        body: em.snippet || em.subject
+                    })
+                });
+                const json = await res.json();
+                const d = json.data;
+
+                document.getElementById('reply-modal-recipient').innerText = d.recipient || em.sender;
+                document.getElementById('reply-modal-subject').innerText = d.subject || `Re: ${em.subject}`;
+                document.getElementById('reply-modal-body').value = d.draft_body || '';
+
+                const researchBox = document.getElementById('reply-modal-research');
+                if (d.research && d.research.length > 0) {
+                    researchBox.innerHTML = d.research.map(r => `
+                        <div style="margin-bottom: 0.5rem;">
+                            <a href="${escapeHtml(r.url)}" target="_blank" style="font-weight: 600; color: var(--primary); text-decoration: none;">${escapeHtml(r.title)}</a>
+                            <div style="color: var(--text-secondary); margin-top: 0.1rem;">${escapeHtml(r.description || '')}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    researchBox.innerHTML = '<span style="color: var(--text-muted);">No external references required for this inquiry.</span>';
+                }
+
+                openModal('reply-modal');
+            } catch (e) {
+                showToast('Error researching email reply.');
+            }
+        }
+
+        async function watchSender(sender) {
+            try {
+                const res = await fetch('api.php?action=add_watched_email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pattern: sender, type: 'sender', notes: 'Added from live inbox' })
+                });
+                const data = await res.json();
+                showToast(data.message || `Keeping an eye on ${sender}`);
+            } catch (e) {
+                showToast('Error adding to watched list.');
+            }
+        }
+
+        function copyReplyDraft() {
+            const txt = document.getElementById('reply-modal-body').value;
+            navigator.clipboard.writeText(txt);
+            showToast('Reply draft copied to clipboard!');
+        }
+
+        async function loadSecurityTelemetry() {
+            try {
+                const res = await fetch('api.php?action=get_security_metrics');
+                const json = await res.json();
+                const data = json.data;
+
+                if (data && data.total_events !== undefined) {
+                    document.getElementById('sec-total-events').innerText = data.total_events;
+                    document.getElementById('sec-critical-threats').innerText = data.critical_threats;
+                    document.getElementById('sec-blocked-ips').innerText = data.blocked_ips_count;
+
+                    const tbody = document.getElementById('security-events-tbody');
+                    if (!data.recent_events || data.recent_events.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No security intrusion events logged yet. Microservice active.</td></tr>';
+                        return;
+                    }
+
+                    tbody.innerHTML = data.recent_events.map(ev => `
+                        <tr>
+                            <td style="font-size: 0.75rem;">${escapeHtml(ev.created_at)}</td>
+                            <td><span class="badge-priority badge-prio-high">[${escapeHtml(ev.event_type)}]</span></td>
+                            <td><code>${escapeHtml(ev.source_ip)}</code></td>
+                            <td><span class="badge-priority ${ev.severity === 'CRITICAL' ? 'badge-prio-high' : 'badge-prio-med'}">[${escapeHtml(ev.severity)}]</span></td>
+                            <td style="font-size: 0.78rem;">
+                                <div>${escapeHtml(ev.details || '')}</div>
+                                <div style="color: var(--text-muted); font-size: 0.7rem;">Endpoint: ${escapeHtml(ev.endpoint || '')}</div>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function triggerSecurityTest() {
+            showToast('Simulating exploit probe on API microservice...');
+            try {
+                const res = await fetch('api.php?action=simulate_security_test', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ test_type: 'sql_injection' })
+                });
+                const data = await res.json();
+                showToast(data.message || 'Probe simulated');
+                loadSecurityTelemetry();
+                fetchStatus();
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadAutomatedTasks() {
+            try {
+                const res = await fetch('api.php?action=get_automated_tasks');
+                const json = await res.json();
+                const tasks = json.data || [];
+                const grid = document.getElementById('automated-tasks-grid');
+
+                grid.innerHTML = tasks.map(t => `
+                    <div class="app-card">
+                        <div class="card-top">
+                            <div class="card-icon-box cyan">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                                </svg>
+                            </div>
+                            <span class="badge-priority badge-prio-low">[${escapeHtml(t.category)}]</span>
+                        </div>
+                        <div class="card-title">${escapeHtml(t.name)}</div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.75rem; line-height: 1.35;">${escapeHtml(t.desc)}</div>
+                        <div class="card-footer">
+                            <button class="btn-card-action btn-card-allow" id="btn-run-${t.key}" onclick="runAutomatedTask('${t.key}')">Run Now</button>
+                            <span id="status-${t.key}" style="font-size: 0.72rem; color: var(--text-muted);">Idle</span>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) { console.error(e); }
+        }
+
+        async function runAutomatedTask(key) {
+            const btn = document.getElementById(`btn-run-${key}`);
+            const statusEl = document.getElementById(`status-${key}`);
+            if (btn) btn.innerText = 'Running...';
+            if (statusEl) statusEl.innerText = 'Executing...';
+
+            try {
+                const res = await fetch('api.php?action=run_automated_task', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ task_key: key })
+                });
+                const json = await res.json();
+                if (btn) btn.innerText = 'Run Now';
+                if (statusEl) {
+                    statusEl.innerText = json.result.status || 'Done';
+                    statusEl.style.color = (json.result.status === 'ERROR') ? '#dc2626' : '#16a34a';
+                }
+                showToast(`Task '${key}' completed: ${JSON.stringify(json.result).substring(0, 80)}...`);
+            } catch (e) {
+                if (btn) btn.innerText = 'Run Now';
+                showToast('Task execution error');
+            }
+        }
+
+        async function loadDailyTasks() {
+            try {
+                const res = await fetch('api.php?action=get_tasks');
+                const json = await res.json();
+                const tasks = json.data || [];
+                const tbody = document.getElementById('tasks-table-body');
+
+                if (tasks.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No daily tasks yet.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = tasks.map(t => {
+                    const isDone = t.status === 'completed';
+                    return `
+                        <tr>
+                            <td><input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleTask(${t.id})"></td>
+                            <td><span class="badge-priority ${t.priority === 'HIGH' ? 'badge-prio-high' : 'badge-prio-med'}">[${t.priority}]</span></td>
+                            <td class="${isDone ? 'task-done-title' : ''}">
+                                <strong>${escapeHtml(t.title)}</strong>
+                                ${t.notes ? `<div style="font-size: 0.72rem; color: var(--text-muted);">${escapeHtml(t.notes)}</div>` : ''}
+                            </td>
+                            <td>${escapeHtml(t.due_date || '-')}</td>
+                            <td><button class="btn-ghost-icon" style="padding: 0.2rem 0.5rem; font-size: 0.72rem;" onclick="toggleTask(${t.id})">${isDone ? 'Reopen' : 'Done'}</button></td>
+                        </tr>
+                    `;
+                }).join('');
+            } catch (e) { console.error(e); }
+        }
+
+        async function toggleTask(id) {
+            try {
+                await fetch('api.php?action=toggle_task', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+                loadDailyTasks();
+            } catch (e) { console.error(e); }
+        }
+
+        async function quickAllowTask(title) {
+            try {
+                await fetch('api.php?action=add_task', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, priority: 'HIGH', due_date: 'Today' })
+                });
+                showToast('Added to Daily Tasks');
+                loadDailyTasks();
+            } catch (e) { console.error(e); }
+        }
+
+        async function saveGmailAuth(e) {
+            e.preventDefault();
+            const password = document.getElementById('gmail-pass-input').value;
+            try {
+                const res = await fetch('api.php?action=save_gmail_credentials', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: 'musamwange2@gmail.com', password })
+                });
+                const data = await res.json();
+                closeModal('gmail-modal');
+                showToast(data.message || 'Saved');
+                fetchTodaysGmail();
+            } catch (e) { showToast('Error saving credentials'); }
+        }
+
+        async function createDailyTask(e) {
+            e.preventDefault();
+            const title = document.getElementById('manual-title').value;
+            const priority = document.getElementById('manual-prio').value;
+            const due_date = document.getElementById('manual-due').value;
+
+            try {
+                await fetch('api.php?action=add_task', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, priority, due_date })
+                });
+                closeModal('add-task-modal');
+                showToast('Daily task created');
+                loadDailyTasks();
+            } catch (e) { console.error(e); }
+        }
+
+        async function toggleDnd() {
+            const next = currentDndMode === 'ON' ? 'OFF' : 'ON';
+            try {
+                await fetch('api.php?action=toggle_dnd', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mode: next })
+                });
+                fetchStatus();
+                showToast(`Notifications set to: ${next}`);
+            } catch (e) { console.error(e); }
+        }
+
+        function setTab(tab) {
+            document.querySelectorAll('.view-panel').forEach(p => p.style.display = 'none');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+            const target = document.getElementById(`view-${tab}`);
+            const nav = document.getElementById(`nav-${tab}`);
+            if (target) target.style.display = 'block';
+            if (nav) nav.classList.add('active');
+
+            if (tab === 'usage') {
+                loadUsageData();
+            }
+        }
+
+        function switchWorkspace(tab, btn) {
+            document.querySelectorAll('.pill-tab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            setTab(tab);
+        }
+
+        function handleBottomInput(e) {
+            if (e.key === 'Enter') {
+                const val = e.target.value.trim();
+                if (!val) return;
+                if (val.startsWith('/scan') || val.toLowerCase().includes('scan inbox')) {
+                    fetchTodaysGmail();
+                } else if (val.startsWith('/dnd')) {
+                    toggleDnd();
+                } else if (val.startsWith('@') || val.startsWith('/search') || val.toLowerCase().startsWith('search ')) {
+                    const cleanQ = val.replace(/^@\w+\s*|^\/search\s*|^search\s*/i, '');
+                    handleSearch(cleanQ);
+                    showToast(`Searching today's emails for: ${cleanQ}`);
+                } else {
+                    document.getElementById('manual-title').value = val;
+                    openModal('add-task-modal');
+                }
+                e.target.value = '';
+            }
+        }
+
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        init();
+    </script>
+</body>
+</html>
