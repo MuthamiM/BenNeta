@@ -3,22 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assistant - Email Intelligence & Daily Tasks Dashboard</title>
+    <title>Avino Assistant - Email Intelligence & Task Allocation</title>
     <style>
         :root {
-            --bg-main: #0a0d12;
-            --bg-card: #12171f;
-            --bg-card-hover: #171e28;
-            --border: #232c3d;
-            --border-highlight: #3b4860;
-            --text-primary: #f0f4f8;
-            --text-secondary: #8c9ba5;
-            --text-muted: #576574;
-            --accent-cyan: #00b4d8;
-            --accent-green: #2ec4b6;
-            --accent-red: #e63946;
-            --accent-yellow: #ffb703;
-            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --bg-window: #eef1f6;
+            --bg-sidebar: #ffffff;
+            --bg-canvas: #fafbfc;
+            --bg-container: #f4f6fa;
+            --bg-card: #ffffff;
+            --border-subtle: #edf0f5;
+            --border-card: #e5e9f0;
+            --border-hover: #d5dbe6;
+
+            --text-heading: #10141a;
+            --text-body: #374151;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
+            --text-light: #c2c9d4;
+
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --primary-light: #eef2ff;
+            
+            --pill-black: #0f172a;
+            --pill-black-hover: #1e293b;
+
+            --accent-purple: #8b5cf6;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-card: 0 4px 20px -2px rgba(16, 24, 40, 0.05);
+            --shadow-floating: 0 12px 32px -4px rgba(16, 24, 40, 0.08);
+
+            --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
         * {
@@ -26,257 +46,726 @@
             margin: 0;
             padding: 0;
             font-family: var(--font-family);
+            -webkit-font-smoothing: antialiased;
         }
 
         body {
-            background-color: var(--bg-main);
-            color: var(--text-primary);
-            min-height: 100vh;
+            background-color: var(--bg-window);
+            color: var(--text-body);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 1.25rem;
+        }
+
+        /* App Window container matching the laptop viewport */
+        .app-window {
+            width: 100%;
+            height: 100%;
+            max-width: 1560px;
+            background: var(--bg-canvas);
+            border-radius: 20px;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(0,0,0,0.06);
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 250px;
+            min-width: 250px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem 1.25rem;
+            justify-content: space-between;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .brand-logo-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #818cf8 0%, #6366f1 50%, #4338ca 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .brand-text {
             display: flex;
             flex-direction: column;
         }
 
-        header {
-            background: var(--bg-card);
-            border-bottom: 1px solid var(--border);
-            padding: 1rem 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
         .brand-title {
-            font-size: 1.15rem;
+            font-size: 0.95rem;
             font-weight: 700;
-            letter-spacing: 1px;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
+            color: var(--text-heading);
+            letter-spacing: -0.2px;
         }
 
         .brand-sub {
-            font-size: 0.75rem;
-            color: var(--accent-cyan);
-            background: rgba(0, 180, 216, 0.1);
-            border: 1px solid rgba(0, 180, 216, 0.3);
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            font-weight: 600;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            letter-spacing: 0.2px;
         }
 
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .badge {
-            font-size: 0.75rem;
-            font-weight: 700;
-            padding: 0.25rem 0.6rem;
-            border-radius: 4px;
-            letter-spacing: 0.5px;
-            display: inline-block;
-        }
-
-        .badge-green { background: rgba(46, 196, 182, 0.15); color: var(--accent-green); border: 1px solid var(--accent-green); }
-        .badge-red { background: rgba(230, 57, 70, 0.15); color: var(--accent-red); border: 1px solid var(--accent-red); }
-        .badge-yellow { background: rgba(255, 183, 3, 0.15); color: var(--accent-yellow); border: 1px solid var(--accent-yellow); }
-        .badge-cyan { background: rgba(0, 180, 216, 0.15); color: var(--accent-cyan); border: 1px solid var(--accent-cyan); }
-        .badge-gray { background: #232c3d; color: var(--text-secondary); border: 1px solid #3b4860; }
-
-        button, .btn {
-            background: #1a2230;
-            color: var(--text-primary);
-            border: 1px solid var(--border-highlight);
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
+        /* Black pill button: "+ New task" */
+        .btn-new-chat {
+            background: var(--pill-black);
+            color: #ffffff;
+            border: none;
+            border-radius: 9999px;
+            padding: 0.7rem 1.25rem;
             font-size: 0.85rem;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
             cursor: pointer;
-            transition: all 0.2s ease;
+            width: 100%;
+            margin-bottom: 1.75rem;
+            transition: background 0.15s ease, transform 0.1s ease;
+        }
+
+        .btn-new-chat:hover {
+            background: var(--pill-black-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-new-chat:active {
+            transform: translateY(0);
+        }
+
+        .nav-section-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.6px;
+            margin-bottom: 0.6rem;
+            padding-left: 0.5rem;
+        }
+
+        .nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.55rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-body);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .nav-item:hover {
+            background: #f8fafc;
+            color: var(--text-heading);
+        }
+
+        .nav-item.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-item svg {
+            width: 18px;
+            height: 18px;
+            stroke-width: 2;
+            color: var(--text-secondary);
+        }
+
+        .nav-item.active svg {
+            color: var(--primary);
+        }
+
+        .topics-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .topic-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.45rem 0.75rem;
+            font-size: 0.82rem;
+            color: var(--text-body);
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .topic-item:hover {
+            background: #f8fafc;
+        }
+
+        .topic-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* Sidebar bottom user info card */
+        .sidebar-bottom {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 1rem;
+        }
+
+        .user-card {
+            background: #f9fafb;
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 0.6rem 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            color: #475569;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-names {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-heading);
+        }
+
+        .user-email {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .credits-pill {
+            background: #ffffff;
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Main Canvas Styling */
+        .main-canvas {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            position: relative;
+            background: var(--bg-canvas);
+        }
+
+        .top-navbar {
+            padding: 1.25rem 2.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        /* Search input bar on top right: Q Search... Ctrl+K */
+        .search-pill-top {
+            background: #ffffff;
+            border: 1px solid var(--border-card);
+            border-radius: 9999px;
+            padding: 0.45rem 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            width: 220px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .search-pill-top input {
+            border: none;
+            outline: none;
+            background: transparent;
+            width: 100%;
+            font-size: 0.8rem;
+            color: var(--text-body);
+        }
+
+        .kbd-badge {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 0.1rem 0.35rem;
+            font-size: 0.68rem;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .btn-ghost-icon {
+            background: #ffffff;
+            border: 1px solid var(--border-card);
+            border-radius: 9999px;
+            padding: 0.45rem 0.85rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-body);
+            cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 0.4rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.15s ease;
         }
 
-        button:hover, .btn:hover {
-            background: #253145;
-            border-color: var(--accent-cyan);
+        .btn-ghost-icon:hover {
+            border-color: var(--border-hover);
+            background: #f8fafc;
         }
 
-        .btn-primary {
-            background: #0077b6;
-            border-color: var(--accent-cyan);
-            color: #fff;
-        }
-        .btn-primary:hover {
-            background: #0096c7;
-        }
-
-        .btn-success {
-            background: #1b493b;
-            border-color: var(--accent-green);
-            color: #afffdf;
-        }
-        .btn-success:hover {
-            background: #246551;
+        /* Content Area */
+        .content-scroll {
+            padding: 0 2.25rem 6.5rem 2.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
         }
 
-        .btn-danger {
-            background: #4a151b;
-            border-color: var(--accent-red);
-            color: #ffb8bf;
-        }
-        .btn-danger:hover {
-            background: #681f27;
+        /* Hero Greeting */
+        .hero-section {
+            margin-top: 0.5rem;
         }
 
-        .container {
-            max-width: 1300px;
-            margin: 0 auto;
-            padding: 1.5rem 2rem;
-            width: 100%;
-            flex: 1;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .stat-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            padding: 1rem 1.25rem;
-            border-radius: 6px;
-        }
-
-        .stat-label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 0.3rem;
+        .hero-title {
+            font-size: 2rem;
             font-weight: 700;
+            color: var(--text-heading);
+            letter-spacing: -0.5px;
+            line-height: 1.2;
         }
 
-        .stat-value {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--text-primary);
+        .hero-sub {
+            font-size: 2rem;
+            font-weight: 300;
+            color: var(--text-light);
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+            margin-top: 0.15rem;
         }
 
-        .tabs-nav {
+        /* Workspaces / View Switcher Pills */
+        .workspaces-section {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+        }
+
+        .workspaces-label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-heading);
+        }
+
+        .workspaces-pills {
             display: flex;
             gap: 0.5rem;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 1.5rem;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
-        .tab-btn {
+        .pill-tab {
             background: transparent;
             border: none;
-            border-bottom: 2px solid transparent;
-            border-radius: 0;
-            padding: 0.75rem 1.25rem;
-            font-size: 0.9rem;
+            border-radius: 9999px;
+            padding: 0.45rem 1rem;
+            font-size: 0.82rem;
+            font-weight: 500;
             color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s ease;
         }
 
-        .tab-btn:hover {
-            background: transparent;
-            color: var(--text-primary);
+        .pill-tab:hover {
+            color: var(--text-heading);
+            background: #f1f5f9;
         }
 
-        .tab-btn.active {
-            color: var(--accent-cyan);
-            border-bottom: 2px solid var(--accent-cyan);
+        .pill-tab.active {
+            background: var(--primary);
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.28);
+        }
+
+        /* Outer Rounded Container matching reference */
+        .cards-container-wrapper {
+            background: var(--bg-container);
+            border-radius: 20px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .section-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .section-header-title {
+            font-size: 0.9rem;
             font-weight: 700;
+            color: var(--text-heading);
         }
 
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
+        /* Horizontal/Grid Cards matching reference */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.25rem;
         }
 
-        .card {
+        .app-card {
             background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 6px;
+            border: 1px solid var(--border-card);
+            border-radius: 18px;
             padding: 1.25rem;
-            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 160px;
+            box-shadow: var(--shadow-card);
+            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+            position: relative;
         }
 
-        .item-row {
+        .app-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px -4px rgba(16, 24, 40, 0.08);
+            border-color: var(--border-hover);
+        }
+
+        .card-top {
             display: flex;
             align-items: flex-start;
             justify-content: space-between;
-            gap: 1rem;
+            margin-bottom: 0.9rem;
         }
 
-        .item-main {
-            flex: 1;
+        .card-icon-box {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .item-title {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.4rem;
+        .card-icon-box.purple {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--accent-purple);
+        }
+        .card-icon-box.cyan {
+            background: rgba(6, 182, 212, 0.1);
+            color: var(--accent-cyan);
+        }
+        .card-icon-box.red {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--accent-red);
+        }
+        .card-icon-box.green {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-green);
         }
 
-        .item-meta {
-            font-size: 0.8rem;
+        .card-dots {
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.2rem;
+            border-radius: 4px;
+        }
+
+        .card-dots:hover {
+            color: var(--text-heading);
+            background: #f1f5f9;
+        }
+
+        .card-title {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: var(--text-heading);
+            line-height: 1.35;
+            margin-bottom: 0.6rem;
+        }
+
+        .card-meta {
+            font-size: 0.75rem;
             color: var(--text-muted);
             display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem;
             align-items: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .item-desc {
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            line-height: 1.4;
-            background: #0d1117;
-            padding: 0.6rem 0.8rem;
-            border-radius: 4px;
-            border-left: 3px solid var(--border-highlight);
-        }
-
-        .item-actions {
-            display: flex;
             gap: 0.5rem;
-            flex-shrink: 0;
+            margin-bottom: 0.75rem;
         }
 
-        .alert-banner {
-            background: rgba(230, 57, 70, 0.1);
-            border: 1px solid var(--accent-red);
-            color: #ff9fa8;
-            padding: 0.75rem 1rem;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
+        .badge-priority {
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            letter-spacing: 0.3px;
+        }
+        .badge-prio-high { background: #fee2e2; color: #dc2626; }
+        .badge-prio-med  { background: #fef3c7; color: #d97706; }
+        .badge-prio-low  { background: #dcfce7; color: #16a34a; }
+
+        .badge-missed-off {
+            background: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fca5a5;
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+        }
+
+        .card-footer {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            margin-top: auto;
+            padding-top: 0.75rem;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .btn-card-action {
+            padding: 0.35rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-card-allow {
+            background: #eef2ff;
+            color: #4f46e5;
+        }
+        .btn-card-allow:hover {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .btn-card-dismiss {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+        .btn-card-dismiss:hover {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        /* Blank / Add card */
+        .app-card-blank {
+            border: 2px dashed #cbd5e1;
+            background: transparent;
+            box-shadow: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all 0.15s ease;
+        }
+
+        .app-card-blank:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.02);
+            transform: translateY(-2px);
+        }
+
+        /* Table view for Daily Tasks & Rules */
+        .modern-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.85rem;
+        }
+
+        .modern-table th {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border-card);
+        }
+
+        .modern-table td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--text-body);
+            background: #ffffff;
+        }
+
+        .modern-table tr:first-child td:first-child { border-top-left-radius: 12px; }
+        .modern-table tr:first-child td:last-child { border-top-right-radius: 12px; }
+        .modern-table tr:last-child td:first-child { border-bottom-left-radius: 12px; }
+        .modern-table tr:last-child td:last-child { border-bottom-right-radius: 12px; }
+
+        .modern-table tr:hover td {
+            background: #fafbfc;
+        }
+
+        .task-done-title {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        /* Floating Pill Input Bar matching the bottom of reference image */
+        .bottom-floating-bar {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 2.25rem;
+            right: 2.25rem;
+            background: #ffffff;
+            border: 1px solid var(--border-card);
+            border-radius: 9999px;
+            padding: 0.65rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: var(--shadow-floating);
+            z-index: 50;
+        }
+
+        .bottom-floating-bar svg {
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .bottom-floating-bar input {
+            border: none;
+            outline: none;
+            width: 100%;
+            font-size: 0.86rem;
+            color: var(--text-body);
+            background: transparent;
+        }
+
+        .bottom-floating-bar input::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-body {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            max-width: 860px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 1.75rem;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .modal-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-heading);
+        }
+
+        .diagram-code-box {
+            background: #0f172a;
+            color: #e2e8f0;
+            border-radius: 12px;
+            padding: 1.25rem;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.8rem;
+            line-height: 1.6;
+            overflow-x: auto;
+            white-space: pre;
+            margin-bottom: 1.25rem;
         }
 
         .form-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 1rem;
             margin-bottom: 1rem;
         }
@@ -284,495 +773,489 @@
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 0.4rem;
+            gap: 0.35rem;
         }
 
-        label {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
+        .form-group label {
+            font-size: 0.78rem;
             font-weight: 600;
+            color: var(--text-secondary);
         }
 
-        input[type="text"], input[type="password"], input[type="number"], select, textarea {
-            background: #0d121a;
-            border: 1px solid var(--border);
-            color: var(--text-primary);
-            padding: 0.55rem 0.75rem;
-            border-radius: 4px;
+        .form-group input, .form-group select {
+            border: 1px solid var(--border-card);
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
             font-size: 0.85rem;
-        }
-
-        input:focus, select:focus, textarea:focus {
             outline: none;
-            border-color: var(--accent-cyan);
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.85rem;
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary);
         }
 
-        th, td {
-            text-align: left;
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        th {
-            background: #0d121a;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.5px;
-        }
-
-        tr:hover td {
-            background: rgba(255, 255, 255, 0.02);
-        }
-
-        /* Modal styling */
-        .modal {
-            display: none;
+        .log-toast {
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.75);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 1.5rem;
-        }
-        .modal.active {
-            display: flex;
-        }
-        .modal-body {
-            background: var(--bg-card);
-            border: 1px solid var(--border-highlight);
-            border-radius: 6px;
-            max-width: 900px;
-            width: 100%;
-            max-height: 85vh;
-            overflow-y: auto;
-            padding: 1.5rem;
-        }
-        .modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 0.75rem;
-            margin-bottom: 1.25rem;
-        }
-        .modal-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .diagram-box {
-            background: #080b0f;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            padding: 1.25rem;
-            margin-bottom: 1.5rem;
-            font-family: monospace;
-            font-size: 0.85rem;
-            line-height: 1.6;
-            color: #d1d9e0;
-            overflow-x: auto;
-            white-space: pre;
-        }
-
-        .task-completed {
-            text-decoration: line-through;
-            color: var(--text-muted);
-        }
-
-        #scan-log {
-            background: #080b0f;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            padding: 0.75rem;
-            font-family: monospace;
-            font-size: 0.8rem;
-            color: #98c379;
-            max-height: 120px;
-            overflow-y: auto;
-            margin-bottom: 1rem;
+            top: 2rem;
+            right: 2rem;
+            background: #0f172a;
+            color: #ffffff;
+            border-radius: 10px;
+            padding: 0.75rem 1.25rem;
+            font-size: 0.82rem;
+            font-weight: 500;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
             display: none;
-            white-space: pre-wrap;
+            z-index: 2000;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="brand-title">
-            <span>ASSISTANT</span>
-            <span class="brand-sub">PC ENGINE (PYTHON + PHP + RUST)</span>
-        </div>
-        <div class="header-actions">
-            <span id="mailbox-badge" class="badge badge-gray">[CHECKING STATUS...]</span>
-            <button id="dnd-btn" onclick="toggleDnd()">DND: [ON]</button>
-            <button class="btn-primary" onclick="triggerScan()">[SCAN LIVE MAILBOX]</button>
-            <button onclick="openModal('diagrams-modal')">[WORKFLOW DIAGRAMS]</button>
-        </div>
-    </header>
+    <div class="log-toast" id="toast"></div>
 
-    <div class="container">
-        <!-- Scan Log Banner -->
-        <div id="scan-log"></div>
+    <div class="app-window">
+        <!-- LEFT SIDEBAR -->
+        <aside class="sidebar">
+            <div>
+                <!-- Brand / Logo -->
+                <div class="sidebar-brand">
+                    <div class="brand-logo-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                            <polyline points="2 17 12 22 22 17"></polyline>
+                            <polyline points="2 12 12 17 22 12"></polyline>
+                        </svg>
+                    </div>
+                    <div class="brand-text">
+                        <span class="brand-title">Avino Ai</span>
+                        <span class="brand-sub">Ai assistant</span>
+                    </div>
+                </div>
 
-        <!-- Quick Stats -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-label">Pending Approval</div>
-                <div id="stat-pending" class="stat-value">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Missed While Off/DND</div>
-                <div id="stat-missed" class="stat-value" style="color: var(--accent-red);">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Active Daily Tasks</div>
-                <div id="stat-todo" class="stat-value" style="color: var(--accent-cyan);">0</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Completed Tasks</div>
-                <div id="stat-completed" class="stat-value" style="color: var(--accent-green);">0</div>
-            </div>
-        </div>
+                <!-- Black Pill Button: "+ New task" -->
+                <button class="btn-new-chat" onclick="openModal('add-task-modal')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    <span>New task</span>
+                </button>
 
-        <!-- Tabs Navigation -->
-        <div class="tabs-nav">
-            <button class="tab-btn active" onclick="switchTab('review-tab')">[APPROVAL QUEUE]</button>
-            <button class="tab-btn" onclick="switchTab('tasks-tab')">[DAILY TASKS BOARD]</button>
-            <button class="tab-btn" onclick="switchTab('rules-tab')">[NOTIFICATION ACTION RULES]</button>
-            <button class="tab-btn" onclick="switchTab('config-tab')">[LIVE IMAP SETTINGS]</button>
-        </div>
+                <!-- Navigation Section: Main -->
+                <div class="nav-section-title">Main</div>
+                <ul class="nav-list">
+                    <li class="nav-item active" id="nav-pending" onclick="setTab('pending')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        <span>Approvals</span>
+                    </li>
+                    <li class="nav-item" id="nav-tasks" onclick="setTab('tasks')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                        <span>Daily tasks</span>
+                    </li>
+                    <li class="nav-item" id="nav-rules" onclick="setTab('rules')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                            <polyline points="13 2 13 9 20 9"></polyline>
+                        </svg>
+                        <span>Action rules</span>
+                    </li>
+                    <li class="nav-item" id="nav-imap" onclick="setTab('imap')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline>
+                            <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
+                        </svg>
+                        <span>Mailbox</span>
+                    </li>
+                    <li class="nav-item" onclick="openModal('diagrams-modal')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        <span>Workflows</span>
+                    </li>
+                </ul>
 
-        <!-- TAB 1: REVIEW & APPROVAL QUEUE -->
-        <div id="review-tab" class="tab-content active">
-            <div id="missed-alert-banner" class="alert-banner" style="display: none;">
-                <span id="missed-alert-text">[!] High-priority notifications were detected while notifications were OFF / Quiet Hours.</span>
+                <!-- Topics / Categories -->
+                <div class="nav-section-title">Topics</div>
+                <ul class="topics-list">
+                    <li class="topic-item" onclick="filterByPriority('HIGH')">
+                        <span class="topic-dot" style="background: var(--accent-purple);"></span>
+                        <span>High Priority</span>
+                    </li>
+                    <li class="topic-item" onclick="filterByPriority('MEDIUM')">
+                        <span class="topic-dot" style="background: var(--accent-green);"></span>
+                        <span>Medium Priority</span>
+                    </li>
+                    <li class="topic-item" onclick="filterByPriority('LOW')">
+                        <span class="topic-dot" style="background: var(--accent-orange);"></span>
+                        <span>Low Priority</span>
+                    </li>
+                </ul>
             </div>
-            <div id="pending-list">
-                <div class="card" style="text-align: center; color: var(--text-muted); padding: 2rem;">
-                    [+] Loading pending queue...
+
+            <!-- Sidebar Bottom: User Card & Status -->
+            <div class="sidebar-bottom">
+                <div class="user-card" onclick="setTab('imap')">
+                    <div class="user-info">
+                        <div class="user-avatar" id="avatar-initials">M</div>
+                        <div class="user-names">
+                            <span class="user-name" id="user-display-name">Marcos</span>
+                            <span class="user-email" id="user-display-email">hey@avino.com</span>
+                        </div>
+                    </div>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+                <div class="credits-pill">
+                    <span id="credits-status-text">Notifications: Active</span>
+                    <button id="sidebar-dnd-toggle" class="btn-ghost-icon" style="padding: 0.15rem 0.4rem; font-size: 0.68rem;" onclick="toggleDnd()">Toggle DND</button>
                 </div>
             </div>
-        </div>
+        </aside>
 
-        <!-- TAB 2: DAILY TASKS BOARD -->
-        <div id="tasks-tab" class="tab-content">
-            <div class="card">
-                <div style="font-weight: 700; margin-bottom: 0.75rem; font-size: 0.95rem;">[+] ADD MANUAL DAILY TASK</div>
-                <form id="add-task-form" onsubmit="addDailyTask(event)" class="form-grid">
-                    <div class="form-group" style="grid-column: span 2;">
-                        <label>Task Title</label>
-                        <input type="text" id="task-title" placeholder="e.g., Update nginx reverse proxy config" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Priority</label>
-                        <select id="task-priority">
-                            <option value="HIGH">[HIGH]</option>
-                            <option value="MEDIUM" selected>[MEDIUM]</option>
-                            <option value="LOW">[LOW]</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Due Date / Time</label>
-                        <input type="text" id="task-due" placeholder="e.g., Today 5:00 PM">
-                    </div>
-                    <div class="form-group" style="align-self: flex-end;">
-                        <button type="submit" class="btn-success" style="width: 100%;">[ADD TASK]</button>
-                    </div>
-                </form>
-            </div>
-
-            <div class="card">
-                <div style="font-weight: 700; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
-                    <span>DAILY TASKS (SYNCED WITH ~/todo.txt)</span>
-                    <button onclick="loadDailyTasks()">[REFRESH]</button>
+        <!-- MAIN CANVAS -->
+        <main class="main-canvas">
+            <!-- Top Navbar -->
+            <header class="top-navbar">
+                <div class="search-pill-top">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="top-search" placeholder="Search..." oninput="handleSearch(this.value)">
+                    <span class="kbd-badge">K</span>
                 </div>
-                <div id="tasks-table-container">
-                    <table id="tasks-table">
-                        <thead>
-                            <tr>
-                                <th style="width: 50px;">STATUS</th>
-                                <th style="width: 90px;">PRIORITY</th>
-                                <th>TITLE & NOTES</th>
-                                <th style="width: 150px;">DUE DATE</th>
-                                <th style="width: 80px;">ACTION</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tasks-tbody"></tbody>
-                    </table>
+                <button class="btn-ghost-icon" onclick="triggerScan()">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                    </svg>
+                    <span>Scan Mailbox</span>
+                </button>
+                <button class="btn-ghost-icon" id="header-dnd-badge" onclick="toggleDnd()">DND: OFF</button>
+            </header>
+
+            <!-- Scrollable Content -->
+            <div class="content-scroll">
+                <!-- Hero Greeting Matching Reference -->
+                <section class="hero-section">
+                    <h1 class="hero-title" id="greeting-title">Hello, Marcos</h1>
+                    <div class="hero-sub">How I can help you?</div>
+                </section>
+
+                <!-- Workspaces / Category Pills Matching Reference -->
+                <section class="workspaces-section">
+                    <div class="workspaces-label">Workspaces</div>
+                    <div class="workspaces-pills">
+                        <button class="pill-tab" onclick="setCategory('all', this)">Agency</button>
+                        <button class="pill-tab active" onclick="setCategory('pending', this)">Team</button>
+                        <button class="pill-tab" onclick="setCategory('tasks', this)">Personal</button>
+                        <button class="pill-tab" onclick="setCategory('missed', this)">Marketing</button>
+                        <button class="pill-tab" onclick="setCategory('rules', this)">Leads</button>
+                    </div>
+                </section>
+
+                <!-- Cards Container Wrapper Matching Reference Image -->
+                <div class="cards-container-wrapper">
+                    <!-- SECTION 1: PENDING APPROVAL QUEUE -->
+                    <div id="view-pending" class="view-panel">
+                        <div class="section-header-row" style="margin-bottom: 1rem;">
+                            <div class="section-header-title">Templates</div>
+                            <button class="btn-ghost-icon" style="padding: 0.2rem 0.5rem;" onclick="openModal('add-task-modal')">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="cards-grid" id="pending-cards-grid">
+                            <!-- Cards populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- SECTION 2: DAILY TASKS BOARD -->
+                    <div id="view-tasks" class="view-panel" style="display: none;">
+                        <div class="section-header-row" style="margin-bottom: 1rem;">
+                            <div class="section-header-title">Daily tasks board</div>
+                            <button class="btn-ghost-icon" onclick="openModal('add-task-modal')">+ Add task</button>
+                        </div>
+                        <table class="modern-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px;"></th>
+                                    <th style="width: 80px;">Priority</th>
+                                    <th>Task title & details</th>
+                                    <th style="width: 140px;">Due date</th>
+                                    <th style="width: 80px;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tasks-table-body"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- SECTION 3: ACTION RULES -->
+                    <div id="view-rules" class="view-panel" style="display: none;">
+                        <div class="section-header-row" style="margin-bottom: 1rem;">
+                            <div class="section-header-title">Notification action rules</div>
+                            <button class="btn-ghost-icon" onclick="openModal('add-rule-modal')">+ Add rule</button>
+                        </div>
+                        <table class="modern-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">ID</th>
+                                    <th>Rule name</th>
+                                    <th style="width: 160px;">Action</th>
+                                    <th style="width: 90px;">Priority</th>
+                                    <th>Match criteria</th>
+                                    <th style="width: 70px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="rules-table-body"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- SECTION 4: IMAP SETTINGS -->
+                    <div id="view-imap" class="view-panel" style="display: none;">
+                        <div class="section-header-row" style="margin-bottom: 1rem;">
+                            <div class="section-header-title">Live IMAP Mailbox Settings</div>
+                        </div>
+                        <form id="imap-config-form" onsubmit="saveImapSettings(event)" class="form-grid" style="background: #ffffff; padding: 1.5rem; border-radius: 14px;">
+                            <div class="form-group">
+                                <label>IMAP Host</label>
+                                <input type="text" id="cfg-host" placeholder="mailserver.businessidentity.llc" required>
+                            </div>
+                            <div class="form-group">
+                                <label>IMAP Port</label>
+                                <input type="number" id="cfg-port" value="993" required>
+                            </div>
+                            <div class="form-group">
+                                <label>SSL Mode</label>
+                                <select id="cfg-ssl">
+                                    <option value="1" selected>SSL/TLS (Port 993)</option>
+                                    <option value="0">Plain / STARTTLS (Port 143)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Mailbox Folder</label>
+                                <input type="text" id="cfg-folder" value="INBOX" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Email / Username</label>
+                                <input type="text" id="cfg-user" placeholder="info@mftechnologies.org" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Password (Leave blank to keep existing)</label>
+                                <input type="password" id="cfg-pass" placeholder="••••••••">
+                            </div>
+                            <div class="form-group" style="grid-column: span 2; margin-top: 0.5rem;">
+                                <button type="submit" class="btn-new-chat" style="width: auto; padding: 0.6rem 1.5rem;">Save configuration</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- TAB 3: NOTIFICATION ACTION RULES -->
-        <div id="rules-tab" class="tab-content">
-            <div class="card">
-                <div style="font-weight: 700; margin-bottom: 0.5rem;">[+] DEFINE WHAT THE ASSISTANT DOES ON SPECIFIC NOTIFICATIONS</div>
-                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
-                    When incoming notifications or emails match your keywords, you can configure the assistant to auto-approve them, dispatch desktop alerts, run custom shell commands, or auto-dismiss them.
-                </p>
-                <form id="add-rule-form" onsubmit="addRule(event)" class="form-grid">
-                    <div class="form-group">
-                        <label>Rule Name</label>
-                        <input type="text" id="rule-name" placeholder="e.g., Critical Server Alerts" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Subject Keywords (comma-separated)</label>
-                        <input type="text" id="rule-subject" placeholder="e.g., outage, failed, error">
-                    </div>
-                    <div class="form-group">
-                        <label>Sender Keywords (comma-separated)</label>
-                        <input type="text" id="rule-sender" placeholder="e.g., alert@, monitoring@">
-                    </div>
-                    <div class="form-group">
-                        <label>Action to Execute</label>
-                        <select id="rule-action">
-                            <option value="ask">Ask to allow (Queue for manual review)</option>
-                            <option value="auto_approve">Auto-approve into Daily Tasks</option>
-                            <option value="auto_approve_and_notify">Auto-approve AND send Desktop Alert</option>
-                            <option value="auto_dismiss">Auto-dismiss (Ignore/Archive)</option>
-                            <option value="execute_command">Execute shell command & queue</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Target Priority</label>
-                        <select id="rule-priority">
-                            <option value="HIGH">[HIGH]</option>
-                            <option value="MEDIUM" selected>[MEDIUM]</option>
-                            <option value="LOW">[LOW]</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Shell Command (Optional)</label>
-                        <input type="text" id="rule-command" placeholder="e.g., systemctl restart service">
-                    </div>
-                    <div class="form-group" style="grid-column: span 2;">
-                        <button type="submit" class="btn-primary">[SAVE ACTION RULE]</button>
-                    </div>
-                </form>
+            <!-- Floating Search Input Pill Matching Reference Image -->
+            <div class="bottom-floating-bar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="quick-prompt-input" placeholder="Ask or search for anything use @ to tag a specific assistant" onkeydown="handleBottomInput(event)">
             </div>
+        </main>
+    </div>
 
-            <div class="card">
-                <div style="font-weight: 700; margin-bottom: 1rem;">ACTIVE NOTIFICATION ACTION RULES</div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width: 40px;">ID</th>
-                            <th>RULE NAME</th>
-                            <th style="width: 180px;">ACTION</th>
-                            <th style="width: 90px;">PRIORITY</th>
-                            <th>MATCH KEYWORDS</th>
-                            <th style="width: 80px;">ACTION</th>
-                        </tr>
-                    </thead>
-                    <tbody id="rules-tbody"></tbody>
-                </table>
+    <!-- MODAL 1: ADD MANUAL TASK -->
+    <div id="add-task-modal" class="modal">
+        <div class="modal-body" style="max-width: 500px;">
+            <div class="modal-header">
+                <div class="modal-title">Create daily task</div>
+                <button class="btn-ghost-icon" onclick="closeModal('add-task-modal')">Close</button>
             </div>
-        </div>
-
-        <!-- TAB 4: LIVE IMAP SETTINGS -->
-        <div id="config-tab" class="tab-content">
-            <div class="card">
-                <div style="font-weight: 700; margin-bottom: 0.5rem;">[+] LIVE IMAP MAILBOX SETTINGS</div>
-                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
-                    Connect directly to your live mail server over SSL/TLS. Credentials are saved locally to config/config.json (chmod 600) and never shared.
-                </p>
-                <form id="imap-form" onsubmit="saveImapSettings(event)" class="form-grid">
-                    <div class="form-group">
-                        <label>IMAP Host</label>
-                        <input type="text" id="cfg-host" placeholder="e.g., mailserver.businessidentity.llc, imap.gmail.com" required>
-                    </div>
-                    <div class="form-group">
-                        <label>IMAP Port</label>
-                        <input type="number" id="cfg-port" value="993" required>
-                    </div>
-                    <div class="form-group">
-                        <label>SSL Mode</label>
-                        <select id="cfg-ssl">
-                            <option value="1" selected>SSL/TLS (Port 993)</option>
-                            <option value="0">Plain / STARTTLS (Port 143)</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Mailbox Folder</label>
-                        <input type="text" id="cfg-folder" value="INBOX" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Username / Email</label>
-                        <input type="text" id="cfg-user" placeholder="e.g., user@domain.com" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Password (Leave blank to keep existing)</label>
-                        <input type="password" id="cfg-pass" placeholder="••••••••">
-                    </div>
-                    <div class="form-group" style="grid-column: span 2;">
-                        <button type="submit" class="btn-primary">[SAVE SETTINGS & TEST LIVE]</button>
-                    </div>
-                </form>
-            </div>
+            <form onsubmit="createDailyTask(event)">
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Task title</label>
+                    <input type="text" id="manual-title" placeholder="e.g. Align calendar with this week tasks" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label>Priority</label>
+                    <select id="manual-prio">
+                        <option value="HIGH">[HIGH]</option>
+                        <option value="MEDIUM" selected>[MEDIUM]</option>
+                        <option value="LOW">[LOW]</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label>Due date / time</label>
+                    <input type="text" id="manual-due" placeholder="Today at 4:00 PM">
+                </div>
+                <button type="submit" class="btn-new-chat" style="margin-bottom: 0;">Add task</button>
+            </form>
         </div>
     </div>
 
-    <!-- WORKFLOW DIAGRAMS MODAL -->
+    <!-- MODAL 2: ADD NOTIFICATION ACTION RULE -->
+    <div id="add-rule-modal" class="modal">
+        <div class="modal-body" style="max-width: 580px;">
+            <div class="modal-header">
+                <div class="modal-title">Define notification action rule</div>
+                <button class="btn-ghost-icon" onclick="closeModal('add-rule-modal')">Close</button>
+            </div>
+            <form onsubmit="createRule(event)" class="form-grid">
+                <div class="form-group" style="grid-column: span 2;">
+                    <label>Rule name</label>
+                    <input type="text" id="rule-name" placeholder="e.g., Server Outage Auto-Alert" required>
+                </div>
+                <div class="form-group">
+                    <label>Subject keywords (comma-separated)</label>
+                    <input type="text" id="rule-subject" placeholder="outage, down, failed">
+                </div>
+                <div class="form-group">
+                    <label>Sender keywords (comma-separated)</label>
+                    <input type="text" id="rule-sender" placeholder="alert@, monitoring@">
+                </div>
+                <div class="form-group">
+                    <label>Action to execute</label>
+                    <select id="rule-action">
+                        <option value="ask">Ask to allow (Queue for approval)</option>
+                        <option value="auto_approve">Auto-approve into Daily Tasks</option>
+                        <option value="auto_approve_and_notify">Auto-approve AND Desktop Alert</option>
+                        <option value="auto_dismiss">Auto-dismiss (Ignore)</option>
+                        <option value="execute_command">Execute shell command</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Target priority</label>
+                    <select id="rule-prio">
+                        <option value="HIGH">[HIGH]</option>
+                        <option value="MEDIUM" selected>[MEDIUM]</option>
+                        <option value="LOW">[LOW]</option>
+                    </select>
+                </div>
+                <div class="form-group" style="grid-column: span 2;">
+                    <label>Shell command (Optional)</label>
+                    <input type="text" id="rule-cmd" placeholder="e.g., systemctl restart service">
+                </div>
+                <div class="form-group" style="grid-column: span 2; margin-top: 0.5rem;">
+                    <button type="submit" class="btn-new-chat" style="margin-bottom: 0;">Save rule</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 3: WORKFLOW DIAGRAMS -->
     <div id="diagrams-modal" class="modal">
         <div class="modal-body">
             <div class="modal-header">
-                <div class="modal-title">[SYSTEM ARCHITECTURE & WORKFLOW DIAGRAMS]</div>
-                <button onclick="closeModal('diagrams-modal')">[CLOSE]</button>
+                <div class="modal-title">System Architecture & Workflow Diagrams</div>
+                <button class="btn-ghost-icon" onclick="closeModal('diagrams-modal')">Close</button>
             </div>
 
-            <div style="font-weight: 700; margin-bottom: 0.5rem; color: var(--accent-cyan);">1. END-TO-END PIPELINE ARCHITECTURE</div>
-            <div class="diagram-box">
-+-----------------------------------------------------------------------------------------+
-|                                    LIVE MAILBOX (IMAP SSL)                              |
-+-----------------------------------------------------------------------------------------+
-                                             |
-                                             v
-               +-----------------------------------------------------------+
-               |                  PYTHON EMAIL FETCHER                     |
-               | - Connects over IMAP (RFC822 / UNSEEN)                    |
-               | - MIME Multipart parser & text body stripper              |
-               | - NLP heuristic extractor (Subject, Action, Deadlines)    |
-               +-----------------------------------------------------------+
-                                             |
-                                             v
-               +-----------------------------------------------------------+
-               |              NOTIFICATION GUARD & STATUS CHECK            |
-               | - Checks if email arrived during:                         |
-               |   * Quiet Hours (e.g. 22:00 - 08:00)                      |
-               |   * Manual Do Not Disturb (DND Active)                    |
-               |   * System Mute (Linux Dunst/GNOME or Windows Focus)      |
-               | - If off: flags item as [MISSED WHILE NOTIFICATIONS OFF]  |
-               +-----------------------------------------------------------+
-                                             |
-                                             v
-               +-----------------------------------------------------------+
-               |               ACTION RULES EVALUATOR (POLICY)             |
-               | - Matches subject keywords & sender filters               |
-               |                                                           |
-               | +-------------------------+-----------------------------+ |
-               | | MATCHED SPECIFIC RULE?  | ACTION TAKEN:               | |
-               | +-------------------------+-----------------------------+ |
-               | | Rule -> Auto-Approve    | Insert directly to Tasks    | |
-               | | Rule -> Execute Command | Run Shell command on PC     | |
-               | | Rule -> Auto-Dismiss    | Archive immediately         | |
-               | | No Rule / Default       | Queue for User Approval     | |
-               | +-------------------------+-----------------------------+ |
-               +-----------------------------------------------------------+
-                                             |
-                                             v
-               +-----------------------------------------------------------+
-               |             INTERACTIVE APPROVAL QUEUE ("ASK")            |
-               | - User prompts via Web Dashboard or Terminal:             |
-               |   * [A]llow into Daily Tasks                              |
-               |   * [E]dit title, priority, due date                      |
-               |   * [D]ismiss / Ignore                                    |
-               +-----------------------------------------------------------+
-                                             |
-                                             v
-               +-----------------------------------------------------------+
-               |           DAILY TASKS STORAGE & SYNCHRONIZATION           |
-               | - SQLite Database (data/assistant.db)                     |
-               | - Plaintext todo.txt sync (~/todo.txt)                    |
-               | - PHP Task Manager CLI & Web API                          |
-               +-----------------------------------------------------------+
-                                             ^
-                                             |  Watches & Notifies
-               +-----------------------------------------------------------+
-               |              RUST BACKGROUND MONITORING DAEMON            |
-               | - Minimal RAM (< 5 MB), 0% CPU idle                       |
-               | - Cross-platform PC native alerts:                        |
-               |   * Linux: notify-send                                    |
-               |   * Windows: PowerShell Toast Notification                |
-               +-----------------------------------------------------------+
-            </div>
-
-            <div style="font-weight: 700; margin-bottom: 0.5rem; color: var(--accent-cyan);">2. "NOTIFICATIONS OFF" MISSED ALERT WORKFLOW</div>
-            <div class="diagram-box">
-  [Incoming Email Arrives]
+            <h4 style="margin-bottom: 0.5rem; font-size: 0.9rem;">1. End-to-End Pipeline & Polyglot Flow</h4>
+            <div class="diagram-code-box">
+[Live IMAP Mailbox (SSL 993)]
             |
             v
-  Is Current Mode = DND (OFF)  --[YES]--> Flag: [MISSED WHILE NOTIFICATIONS OFF]
-  OR Within Quiet Hours (22:00-08:00)?        |
-            |                                 v
-          [NO]                     Highlighted with Red Alert Flag
-            |                                 |
-            v                                 v
-  Standard Notification Flow       Queued in Pending Approval List with Priority Alert
+[Python Email Ingestion] -----> Extracts MIME, Action Items, Deadlines
+            |
+            v
+[Notification Guard] ---------> Checks DND / Quiet Hours (22:00-08:00)
+            |                   Flags: [MISSED WHILE NOTIFICATIONS OFF]
+            v
+[Action Rules Evaluator] -----> Matches rules: Auto-Approve, Run Command, Dismiss, or Ask
+            |
+            v
+[Approval Queue ("Ask")] -----> Interactive Allow / Edit / Dismiss
+            |
+            v
+[Daily Tasks (SQLite)] -------> Synchronized with ~/todo.txt via PHP
+            ^
+            | (Watches & Dispatches Desktop Alerts)
+[Rust Background Daemon] -----> Native Desktop Toasts (Linux & Windows)
             </div>
 
-            <div style="font-weight: 700; margin-bottom: 0.5rem; color: var(--accent-cyan);">3. USER APPROVAL & ACTION SELECTION MATRIX</div>
-            <div class="diagram-box">
-+---------------------+---------------------------------------------------------------+
-| User Selection      | System Action                                                 |
-+---------------------+---------------------------------------------------------------+
-| [A] Allow           | Inserts into `daily_tasks` table and appends to ~/todo.txt     |
-| [E] Edit & Allow    | Prompts for modified title/priority/deadline, then allocates  |
-| [D] Dismiss         | Marks as 'dismissed', hides from queue                        |
-| [S] Skip            | Retains in pending state for later review                     |
-+---------------------+---------------------------------------------------------------+
+            <h4 style="margin-bottom: 0.5rem; font-size: 0.9rem;">2. "Notifications Off" Missed Alert Detection</h4>
+            <div class="diagram-code-box">
+Email Received ---> Is Time in Quiet Hours (22:00-08:00) OR DND Active?
+                          |
+             +------------+------------+
+             | YES                     | NO
+             v                         v
+     Flagged as Missed          Standard Notification
+     [MISSED WHILE OFF]                |
+             |                         v
+             v                  Standard Review
+     High Priority Banner 
             </div>
         </div>
     </div>
 
     <script>
-        let currentMode = "ON";
+        let allPending = [];
+        let allTasks = [];
+        let currentDndMode = "ON";
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 3500);
+        }
+
+        async function init() {
+            await fetchStatus();
+            await loadPending();
+            await loadTasks();
+            await loadRules();
+        }
 
         async function fetchStatus() {
             try {
                 const res = await fetch('api.php?action=status');
                 const data = await res.json();
                 if (data.success) {
-                    currentMode = data.notifications_mode;
-                    document.getElementById('stat-pending').innerText = data.pending_count;
-                    document.getElementById('stat-missed').innerText = data.missed_count;
-                    document.getElementById('stat-todo').innerText = data.todo_count;
-                    document.getElementById('stat-completed').innerText = data.completed_count;
+                    currentDndMode = data.notifications_mode;
+                    const dndBadge = document.getElementById('header-dnd-badge');
+                    const dndSidebar = document.getElementById('credits-status-text');
 
-                    const mbBadge = document.getElementById('mailbox-badge');
-                    if (data.configured) {
-                        mbBadge.className = 'badge badge-green';
-                        mbBadge.innerText = `[CONNECTED: ${data.username || data.host}]`;
+                    if (currentDndMode === 'OFF') {
+                        dndBadge.innerText = 'DND: ON (QUIET)';
+                        dndBadge.style.color = '#ef4444';
+                        dndSidebar.innerText = 'DND: Notifications Muted';
                     } else {
-                        mbBadge.className = 'badge badge-yellow';
-                        mbBadge.innerText = '[MAILBOX NOT CONFIGURED]';
+                        dndBadge.innerText = 'DND: OFF (ACTIVE)';
+                        dndBadge.style.color = '#10b981';
+                        dndSidebar.innerText = 'Notifications: Active';
                     }
 
-                    const dndBtn = document.getElementById('dnd-btn');
-                    if (currentMode === 'OFF') {
-                        dndBtn.className = 'badge-red';
-                        dndBtn.innerText = 'NOTIFICATIONS: [OFF - DND ACTIVE]';
-                    } else {
-                        dndBtn.className = 'badge-green';
-                        dndBtn.innerText = 'NOTIFICATIONS: [ON]';
+                    if (data.username) {
+                        const namePart = data.username.split('@')[0];
+                        const capName = namePart.charAt(0).toUpperCase() + namePart.slice(1);
+                        document.getElementById('greeting-title').innerText = `Hello, ${capName}`;
+                        document.getElementById('user-display-name').innerText = capName;
+                        document.getElementById('user-display-email').innerText = data.username;
+                        document.getElementById('avatar-initials').innerText = capName.charAt(0);
                     }
 
-                    const missedBanner = document.getElementById('missed-alert-banner');
-                    if (data.missed_count > 0) {
-                        missedBanner.style.display = 'flex';
-                        document.getElementById('missed-alert-text').innerText = 
-                            `[!] ${data.missed_count} action item(s) arrived while notifications were OFF / Quiet Hours.`;
-                    } else {
-                        missedBanner.style.display = 'none';
-                    }
-
-                    // Populate config inputs if empty
-                    if (data.host && !document.getElementById('cfg-host').value) {
+                    if (data.host) {
                         document.getElementById('cfg-host').value = data.host;
                         document.getElementById('cfg-user').value = data.username;
                         document.getElementById('cfg-folder').value = data.folder;
                     }
                 }
-            } catch (err) {
-                console.error("Status error:", err);
+            } catch (e) {
+                console.error(e);
             }
         }
 
@@ -780,79 +1263,111 @@
             try {
                 const res = await fetch('api.php?action=get_pending');
                 const data = await res.json();
-                const container = document.getElementById('pending-list');
-
-                if (!data.success || !data.data || data.data.length === 0) {
-                    container.innerHTML = `
-                        <div class="card" style="text-align: center; color: var(--text-muted); padding: 2rem;">
-                            [+] All caught up! No tasks waiting for approval.
-                        </div>`;
-                    return;
-                }
-
-                container.innerHTML = data.data.map(item => {
-                    const isMissed = item.is_missed_notification == 1;
-                    const prioClass = item.priority === 'HIGH' ? 'badge-red' : (item.priority === 'MEDIUM' ? 'badge-yellow' : 'badge-green');
-                    return `
-                        <div class="card">
-                            <div class="item-row">
-                                <div class="item-main">
-                                    <div class="item-title">${escapeHtml(item.title)}</div>
-                                    <div class="item-meta">
-                                        <span class="badge ${prioClass}">[${item.priority}]</span>
-                                        ${isMissed ? '<span class="badge badge-red">[MISSED WHILE NOTIFICATIONS OFF]</span>' : ''}
-                                        <span>From: <strong>${escapeHtml(item.sender || 'Unknown')}</strong></span>
-                                        <span>Subject: <em>${escapeHtml(item.subject || '(No Subject)')}</em></span>
-                                        <span>Due: <strong>${escapeHtml(item.due_hint || 'None')}</strong></span>
-                                    </div>
-                                    ${item.description ? `<div class="item-desc">${escapeHtml(item.description)}</div>` : ''}
-                                </div>
-                                <div class="item-actions">
-                                    <button class="btn-success" onclick="approveTask(${item.id})">[ALLOW TO TASKS]</button>
-                                    <button class="btn-danger" onclick="dismissTask(${item.id})">[DISMISS]</button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            } catch (err) {
-                console.error(err);
+                allPending = data.data || [];
+                renderPendingCards(allPending);
+            } catch (e) {
+                console.error(e);
             }
         }
 
-        async function loadDailyTasks() {
+        function renderPendingCards(items) {
+            const grid = document.getElementById('pending-cards-grid');
+            if (items.length === 0) {
+                grid.innerHTML = `
+                    <div class="app-card app-card-blank" onclick="triggerScan()">
+                        <div style="text-align: center;">
+                            <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: 0.3rem;">[+] Scan Mailbox</div>
+                            <div style="font-size: 0.75rem;">All caught up! Click to check live inbox</div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            const colors = ['purple', 'cyan', 'green', 'orange'];
+            const cardsHtml = items.map((item, idx) => {
+                const color = item.priority === 'HIGH' ? 'purple' : colors[idx % colors.length];
+                const isMissed = item.is_missed_notification == 1;
+                const prioBadge = item.priority === 'HIGH' ? 'badge-prio-high' : (item.priority === 'MEDIUM' ? 'badge-prio-med' : 'badge-prio-low');
+
+                return `
+                    <div class="app-card">
+                        <div class="card-top">
+                            <div class="card-icon-box ${color}">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                            </div>
+                            <div class="card-dots" title="Dismiss" onclick="dismissTask(${item.id})">···</div>
+                        </div>
+
+                        <div class="card-title">${escapeHtml(item.title)}</div>
+                        
+                        <div class="card-meta">
+                            <span class="badge-priority ${prioBadge}">[${item.priority}]</span>
+                            ${isMissed ? '<span class="badge-missed-off">[MISSED WHILE OFF]</span>' : ''}
+                        </div>
+
+                        ${item.description ? `<div style="font-size: 0.76rem; color: var(--text-secondary); margin-bottom: 0.6rem; line-height: 1.35;">${escapeHtml(item.description.substring(0, 80))}...</div>` : ''}
+
+                        <div class="card-footer">
+                            <span style="font-size: 0.72rem; color: var(--text-muted);">${escapeHtml(item.due_hint || 'Due soon')}</span>
+                            <div style="display: flex; gap: 0.4rem;">
+                                <button class="btn-card-action btn-card-allow" onclick="approveTask(${item.id})">Allow</button>
+                                <button class="btn-card-action btn-card-dismiss" onclick="dismissTask(${item.id})">Dismiss</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            const blankCard = `
+                <div class="app-card app-card-blank" onclick="openModal('add-task-modal')">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                </div>
+            `;
+
+            grid.innerHTML = cardsHtml + blankCard;
+        }
+
+        async function loadTasks() {
             try {
                 const res = await fetch('api.php?action=get_tasks');
                 const data = await res.json();
-                const tbody = document.getElementById('tasks-tbody');
+                allTasks = data.data || [];
+                const tbody = document.getElementById('tasks-table-body');
 
-                if (!data.success || !data.data || data.data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No daily tasks yet.</td></tr>`;
+                if (allTasks.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No daily tasks scheduled.</td></tr>`;
                     return;
                 }
 
-                tbody.innerHTML = data.data.map(t => {
+                tbody.innerHTML = allTasks.map(t => {
                     const isDone = t.status === 'completed';
-                    const prioClass = t.priority === 'HIGH' ? 'badge-red' : (t.priority === 'MEDIUM' ? 'badge-yellow' : 'badge-green');
+                    const prioClass = t.priority === 'HIGH' ? 'badge-prio-high' : (t.priority === 'MEDIUM' ? 'badge-prio-med' : 'badge-prio-low');
                     return `
                         <tr>
                             <td>
                                 <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleTask(${t.id})">
                             </td>
-                            <td><span class="badge ${prioClass}">[${t.priority}]</span></td>
-                            <td class="${isDone ? 'task-completed' : ''}">
+                            <td><span class="badge-priority ${prioClass}">[${t.priority}]</span></td>
+                            <td class="${isDone ? 'task-done-title' : ''}">
                                 <strong>${escapeHtml(t.title)}</strong>
-                                ${t.notes ? `<div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">${escapeHtml(t.notes)}</div>` : ''}
+                                ${t.notes ? `<div style="font-size: 0.72rem; color: var(--text-muted);">${escapeHtml(t.notes)}</div>` : ''}
                             </td>
                             <td>${escapeHtml(t.due_date || '-')}</td>
                             <td>
-                                <button class="badge-gray" onclick="toggleTask(${t.id})">${isDone ? '[REOPEN]' : '[DONE]'}</button>
+                                <button class="btn-ghost-icon" style="padding: 0.2rem 0.5rem; font-size: 0.72rem;" onclick="toggleTask(${t.id})">${isDone ? 'Reopen' : 'Done'}</button>
                             </td>
                         </tr>
                     `;
                 }).join('');
-            } catch (err) {
-                console.error(err);
+            } catch (e) {
+                console.error(e);
             }
         }
 
@@ -860,52 +1375,36 @@
             try {
                 const res = await fetch('api.php?action=get_rules');
                 const data = await res.json();
-                const tbody = document.getElementById('rules-tbody');
+                const tbody = document.getElementById('rules-table-body');
+                const rules = data.data || [];
 
-                if (!data.success || !data.data || data.data.length === 0) {
+                if (rules.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No custom rules defined yet.</td></tr>`;
                     return;
                 }
 
-                tbody.innerHTML = data.data.map(r => {
+                tbody.innerHTML = rules.map(r => {
                     const subj = (r.match_subject || []).join(', ') || '(any)';
                     const sender = (r.match_sender || []).join(', ') || '(any)';
-                    const prioClass = r.target_priority === 'HIGH' ? 'badge-red' : (r.target_priority === 'MEDIUM' ? 'badge-yellow' : 'badge-green');
                     return `
                         <tr>
                             <td>${r.id}</td>
                             <td><strong>${escapeHtml(r.name || 'Rule')}</strong></td>
-                            <td><span class="badge badge-cyan">[${escapeHtml(r.action)}]</span></td>
-                            <td><span class="badge ${prioClass}">[${r.target_priority || 'MED'}]</span></td>
-                            <td>
+                            <td><span class="badge-priority badge-prio-low">[${escapeHtml(r.action)}]</span></td>
+                            <td>[${escapeHtml(r.target_priority || 'MED')}]</td>
+                            <td style="font-size: 0.75rem;">
                                 <div>Subj: <code>${escapeHtml(subj)}</code></div>
                                 <div>From: <code>${escapeHtml(sender)}</code></div>
-                                ${r.command ? `<div style="color: var(--accent-cyan); font-size: 0.75rem;">Cmd: <code>${escapeHtml(r.command)}</code></div>` : ''}
+                                ${r.command ? `<div style="color: var(--primary);">Cmd: <code>${escapeHtml(r.command)}</code></div>` : ''}
                             </td>
                             <td>
-                                <button class="btn-danger" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;" onclick="deleteRule(${r.id})">[DELETE]</button>
+                                <button class="btn-ghost-icon" style="padding: 0.2rem 0.4rem; color: #dc2626;" onclick="deleteRule(${r.id})">Delete</button>
                             </td>
                         </tr>
                     `;
                 }).join('');
-            } catch (err) {
-                console.error(err);
-            }
-        }
-
-        async function triggerScan() {
-            const logBox = document.getElementById('scan-log');
-            logBox.style.display = 'block';
-            logBox.innerText = '[*] Scanning live IMAP mailbox for emails and missed notifications...';
-            try {
-                const res = await fetch('api.php?action=scan', { method: 'POST' });
-                const data = await res.json();
-                logBox.innerText = data.output || '[+] Scan completed.';
-                fetchStatus();
-                loadPending();
-                loadDailyTasks();
-            } catch (err) {
-                logBox.innerText = '[-] Scan failed: ' + err;
+            } catch (e) {
+                console.error(e);
             }
         }
 
@@ -918,13 +1417,11 @@
                 });
                 const data = await res.json();
                 if (data.success) {
-                    fetchStatus();
+                    showToast('Task approved into Daily Tasks');
                     loadPending();
-                    loadDailyTasks();
+                    loadTasks();
                 }
-            } catch (err) {
-                console.error(err);
-            }
+            } catch (e) { console.error(e); }
         }
 
         async function dismissTask(id) {
@@ -936,12 +1433,10 @@
                 });
                 const data = await res.json();
                 if (data.success) {
-                    fetchStatus();
+                    showToast('Task dismissed');
                     loadPending();
                 }
-            } catch (err) {
-                console.error(err);
-            }
+            } catch (e) { console.error(e); }
         }
 
         async function toggleTask(id) {
@@ -953,19 +1448,46 @@
                 });
                 const data = await res.json();
                 if (data.success) {
-                    fetchStatus();
-                    loadDailyTasks();
+                    loadTasks();
                 }
-            } catch (err) {
-                console.error(err);
+            } catch (e) { console.error(e); }
+        }
+
+        async function triggerScan() {
+            showToast('Scanning live IMAP mailbox...');
+            try {
+                const res = await fetch('api.php?action=scan', { method: 'POST' });
+                const data = await res.json();
+                showToast(data.output || 'Scan finished');
+                loadPending();
+                loadTasks();
+                fetchStatus();
+            } catch (e) {
+                showToast('Scan error');
             }
         }
 
-        async function addDailyTask(e) {
+        async function toggleDnd() {
+            const next = currentDndMode === 'ON' ? 'OFF' : 'ON';
+            try {
+                const res = await fetch('api.php?action=toggle_dnd', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mode: next })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    fetchStatus();
+                    showToast(`Notifications set to: ${next}`);
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function createDailyTask(e) {
             e.preventDefault();
-            const title = document.getElementById('task-title').value;
-            const priority = document.getElementById('task-priority').value;
-            const due_date = document.getElementById('task-due').value;
+            const title = document.getElementById('manual-title').value;
+            const priority = document.getElementById('manual-prio').value;
+            const due_date = document.getElementById('manual-due').value;
 
             try {
                 const res = await fetch('api.php?action=add_task', {
@@ -975,64 +1497,22 @@
                 });
                 const data = await res.json();
                 if (data.success) {
-                    document.getElementById('task-title').value = '';
-                    document.getElementById('task-due').value = '';
-                    fetchStatus();
-                    loadDailyTasks();
+                    closeModal('add-task-modal');
+                    document.getElementById('manual-title').value = '';
+                    showToast('Task added');
+                    loadTasks();
                 }
-            } catch (err) {
-                console.error(err);
-            }
+            } catch (e) { console.error(e); }
         }
 
-        async function toggleDnd() {
-            const nextMode = currentMode === 'ON' ? 'OFF' : 'ON';
-            try {
-                const res = await fetch('api.php?action=toggle_dnd', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ mode: nextMode })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    fetchStatus();
-                }
-            } catch (err) {
-                console.error(err);
-            }
-        }
-
-        async function saveImapSettings(e) {
-            e.preventDefault();
-            const host = document.getElementById('cfg-host').value;
-            const port = document.getElementById('cfg-port').value;
-            const ssl = document.getElementById('cfg-ssl').value;
-            const folder = document.getElementById('cfg-folder').value;
-            const username = document.getElementById('cfg-user').value;
-            const password = document.getElementById('cfg-pass').value;
-
-            try {
-                const res = await fetch('api.php?action=save_imap', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ host, port, ssl: ssl === '1', folder, username, password })
-                });
-                const data = await res.json();
-                alert(data.message || 'Saved');
-                fetchStatus();
-            } catch (err) {
-                alert('Error: ' + err);
-            }
-        }
-
-        async function addRule(e) {
+        async function createRule(e) {
             e.preventDefault();
             const name = document.getElementById('rule-name').value;
             const match_subject = document.getElementById('rule-subject').value;
             const match_sender = document.getElementById('rule-sender').value;
             const rule_action = document.getElementById('rule-action').value;
-            const target_priority = document.getElementById('rule-priority').value;
-            const command = document.getElementById('rule-command').value;
+            const target_priority = document.getElementById('rule-prio').value;
+            const command = document.getElementById('rule-cmd').value;
 
             try {
                 const res = await fetch('api.php?action=add_rule', {
@@ -1042,15 +1522,11 @@
                 });
                 const data = await res.json();
                 if (data.success) {
-                    document.getElementById('rule-name').value = '';
-                    document.getElementById('rule-subject').value = '';
-                    document.getElementById('rule-sender').value = '';
-                    document.getElementById('rule-command').value = '';
+                    closeModal('add-rule-modal');
+                    showToast('Rule created');
                     loadRules();
                 }
-            } catch (err) {
-                console.error(err);
-            }
+            } catch (e) { console.error(e); }
         }
 
         async function deleteRule(id) {
@@ -1063,39 +1539,112 @@
                 });
                 const data = await res.json();
                 if (data.success) {
+                    showToast('Rule deleted');
                     loadRules();
                 }
-            } catch (err) {
-                console.error(err);
+            } catch (e) { console.error(e); }
+        }
+
+        async function saveImapSettings(e) {
+            e.preventDefault();
+            const host = document.getElementById('cfg-host').value;
+            const port = document.getElementById('cfg-port').value;
+            const ssl = document.getElementById('cfg-ssl').value === '1';
+            const folder = document.getElementById('cfg-folder').value;
+            const username = document.getElementById('cfg-user').value;
+            const password = document.getElementById('cfg-pass').value;
+
+            try {
+                const res = await fetch('api.php?action=save_imap', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ host, port, ssl, folder, username, password })
+                });
+                const data = await res.json();
+                showToast(data.message || 'Settings saved');
+                fetchStatus();
+            } catch (e) { console.error(e); }
+        }
+
+        function setTab(tab) {
+            document.querySelectorAll('.view-panel').forEach(p => p.style.display = 'none');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+            if (tab === 'pending') {
+                document.getElementById('view-pending').style.display = 'block';
+                document.getElementById('nav-pending').classList.add('active');
+            } else if (tab === 'tasks') {
+                document.getElementById('view-tasks').style.display = 'block';
+                document.getElementById('nav-tasks').classList.add('active');
+            } else if (tab === 'rules') {
+                document.getElementById('view-rules').style.display = 'block';
+                document.getElementById('nav-rules').classList.add('active');
+            } else if (tab === 'imap') {
+                document.getElementById('view-imap').style.display = 'block';
+                document.getElementById('nav-imap').classList.add('active');
             }
         }
 
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            event.target.classList.add('active');
+        function setCategory(cat, btn) {
+            document.querySelectorAll('.pill-tab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            if (cat === 'pending' || cat === 'all') {
+                setTab('pending');
+                renderPendingCards(allPending);
+            } else if (cat === 'missed') {
+                setTab('pending');
+                const missed = allPending.filter(p => p.is_missed_notification == 1);
+                renderPendingCards(missed);
+            } else if (cat === 'tasks') {
+                setTab('tasks');
+            } else if (cat === 'rules') {
+                setTab('rules');
+            }
         }
 
-        function openModal(id) {
-            document.getElementById(id).classList.add('active');
+        function filterByPriority(prio) {
+            setTab('pending');
+            const filtered = allPending.filter(p => p.priority === prio);
+            renderPendingCards(filtered);
         }
 
-        function closeModal(id) {
-            document.getElementById(id).classList.remove('active');
+        function handleSearch(q) {
+            const query = q.toLowerCase();
+            const filtered = allPending.filter(p => 
+                (p.title && p.title.toLowerCase().includes(query)) ||
+                (p.sender && p.sender.toLowerCase().includes(query)) ||
+                (p.description && p.description.toLowerCase().includes(query))
+            );
+            renderPendingCards(filtered);
         }
+
+        function handleBottomInput(e) {
+            if (e.key === 'Enter') {
+                const val = e.target.value.trim();
+                if (!val) return;
+                if (val.startsWith('/scan')) {
+                    triggerScan();
+                } else if (val.startsWith('/dnd')) {
+                    toggleDnd();
+                } else {
+                    // Quick add task
+                    document.getElementById('manual-title').value = val;
+                    openModal('add-task-modal');
+                }
+                e.target.value = '';
+            }
+        }
+
+        function openModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
         function escapeHtml(str) {
             if (!str) return '';
             return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
 
-        // Initialize dashboard
-        fetchStatus();
-        loadPending();
-        loadDailyTasks();
-        loadRules();
-        setInterval(fetchStatus, 10000);
+        init();
     </script>
 </body>
 </html>
