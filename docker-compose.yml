@@ -12,6 +12,9 @@ services:
     volumes:
       - benneta_data:/app/data
       - benneta_config:/app/config
+      - ./php:/app/php
+      - ./python:/app/python
+      - ./web:/app/web
     deploy:
       resources:
         limits:

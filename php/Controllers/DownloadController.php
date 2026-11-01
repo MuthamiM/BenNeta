@@ -17,18 +17,18 @@ class DownloadController extends BaseController {
         $os = 'linux';
         $osName = 'Linux (Debian / Ubuntu / Mint)';
         $recommendedPkg = 'deb';
-        $recommendedFile = 'benneta_1.0.0_amd64.deb';
+        $recommendedFile = 'ezer_1.0.0_amd64.deb';
 
         if (stripos($ua, 'Windows') !== false || stripos($ua, 'Win64') !== false || stripos($ua, 'WOW64') !== false) {
             $os = 'windows';
             $osName = 'Windows 10 / 11 (64-bit)';
             $recommendedPkg = 'exe';
-            $recommendedFile = 'benneta_windows_x64.zip';
+            $recommendedFile = 'ezer_windows_x64.zip';
         } elseif (stripos($ua, 'Macintosh') !== false || stripos($ua, 'Mac OS') !== false) {
             $os = 'macos';
             $osName = 'macOS (Darwin)';
             $recommendedPkg = 'deb';
-            $recommendedFile = 'benneta_1.0.0_amd64.deb';
+            $recommendedFile = 'ezer_1.0.0_amd64.deb';
         }
 
         return $this->success([
@@ -43,8 +43,11 @@ class DownloadController extends BaseController {
     private function resolveDebPath(): ?string {
         $root = dirname(dirname(__DIR__));
         $candidates = [
+            $root . DIRECTORY_SEPARATOR . 'web' . DIRECTORY_SEPARATOR . 'downloads' . DIRECTORY_SEPARATOR . 'ezer_1.0.0_amd64.deb',
             $root . DIRECTORY_SEPARATOR . 'web' . DIRECTORY_SEPARATOR . 'downloads' . DIRECTORY_SEPARATOR . 'benneta_1.0.0_amd64.deb',
+            $this->distDir . DIRECTORY_SEPARATOR . 'ezer_1.0.0_amd64.deb',
             $this->distDir . DIRECTORY_SEPARATOR . 'benneta_1.0.0_amd64.deb',
+            $root . DIRECTORY_SEPARATOR . 'ezer_1.0.0_amd64.deb',
             $root . DIRECTORY_SEPARATOR . 'benneta_1.0.0_amd64.deb'
         ];
         foreach ($candidates as $p) {
@@ -56,8 +59,11 @@ class DownloadController extends BaseController {
     private function resolveWindowsPath(): ?string {
         $root = dirname(dirname(__DIR__));
         $candidates = [
+            $root . DIRECTORY_SEPARATOR . 'web' . DIRECTORY_SEPARATOR . 'downloads' . DIRECTORY_SEPARATOR . 'ezer_windows_x64.zip',
             $root . DIRECTORY_SEPARATOR . 'web' . DIRECTORY_SEPARATOR . 'downloads' . DIRECTORY_SEPARATOR . 'benneta_windows_x64.zip',
+            $this->distDir . DIRECTORY_SEPARATOR . 'ezer_windows_x64.zip',
             $this->distDir . DIRECTORY_SEPARATOR . 'benneta_windows_x64.zip',
+            $root . DIRECTORY_SEPARATOR . 'ezer_windows_x64.zip',
             $root . DIRECTORY_SEPARATOR . 'benneta_windows_x64.zip'
         ];
         foreach ($candidates as $p) {
@@ -78,12 +84,12 @@ class DownloadController extends BaseController {
 
         return $this->success([
             'version' => '1.0.0',
-            'release_name' => 'BenNeta PC Intelligence & Automation',
+            'release_name' => 'EZER PC Intelligence & Automation',
             'memory_budget' => 'Strict 28MB RAM Constraint',
             'packages' => [
                 'linux' => [
                     'format' => 'deb',
-                    'filename' => 'benneta_1.0.0_amd64.deb',
+                    'filename' => 'ezer_1.0.0_amd64.deb',
                     'arch' => 'amd64',
                     'size_bytes' => $debSize,
                     'size_formatted' => round($debSize / 1024, 1) . ' KB',
@@ -92,7 +98,7 @@ class DownloadController extends BaseController {
                 ],
                 'windows' => [
                     'format' => 'exe_zip',
-                    'filename' => 'benneta_windows_x64.zip',
+                    'filename' => 'ezer_windows_x64.zip',
                     'arch' => 'x64',
                     'size_bytes' => $winSize,
                     'size_formatted' => round($winSize / (1024 * 1024), 2) . ' MB',

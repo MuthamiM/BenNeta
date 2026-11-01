@@ -28,8 +28,9 @@ class SecurityMiddleware implements MiddlewareInterface {
         $ip = $request->getClientIp();
         $pdo = $this->db->getPdo();
 
-        // 1. Check if IP is currently blocked (exempt loopback IPs)
-        if (!in_array($ip, ['127.0.0.1', '::1', 'localhost'])) {
+        // 1. Check if IP is currently blocked (exempt loopback & private docker bridge IPs)
+        $isPrivate = in_array($ip, ['127.0.0.1', '::1', 'localhost']) || strpos($ip, '172.') === 0 || strpos($ip, '10.') === 0 || strpos($ip, '192.168.') === 0;
+        if (!$isPrivate) {
             try {
                 $stmt = $pdo->prepare("SELECT is_blocked, failed_attempts FROM security_ip_reputation WHERE ip = ?");
                 $stmt->execute([$ip]);

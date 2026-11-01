@@ -133,6 +133,29 @@ def init_db():
         status TEXT DEFAULT 'OK',
         recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
+
+    -- Conversation History: Store all chat conversations and messages
+    CREATE TABLE IF NOT EXISTS conversations (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL DEFAULT 'New Conversation',
+        preview TEXT DEFAULT '',
+        message_count INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS conversation_messages (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        conversation_id INTEGER NOT NULL,
+        role TEXT NOT NULL CHECK(role IN ('user', 'assistant', 'system')),
+        content TEXT NOT NULL,
+        metadata_json TEXT DEFAULT '',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_convo_messages_convo_id ON conversation_messages(conversation_id);
+    CREATE INDEX IF NOT EXISTS idx_conversations_updated ON conversations(updated_at DESC);
     """)
 
     cursor.execute("""

@@ -13,6 +13,9 @@ use BenNeta\Controllers\TaskController;
 use BenNeta\Controllers\ResearchController;
 use BenNeta\Controllers\UsageController;
 use BenNeta\Controllers\DownloadController;
+use BenNeta\Controllers\AssistantController;
+use BenNeta\Controllers\ConversationController;
+use BenNeta\Controllers\AuthController;
 use BenNeta\Services\SystemService;
 
 class App {
@@ -53,6 +56,16 @@ class App {
         $this->router->register('get_pending_reviews', [EmailController::class, 'getPendingReviews']);
         $this->router->register('approve_task', [EmailController::class, 'approveEmail']);
         $this->router->register('reject_task', [EmailController::class, 'rejectEmail']);
+        $this->router->register('send_reply', [EmailController::class, 'sendReply']);
+        $this->router->register('send_email', [EmailController::class, 'sendReply']);
+
+        // AI Assistant & Brave Model Commander Routes
+        $this->router->register('assistant_command', [AssistantController::class, 'executeCommand']);
+        $this->router->register('open_excel', [AssistantController::class, 'openExcel']);
+        $this->router->register('download_excel', [AssistantController::class, 'downloadExcel']);
+        $this->router->register('download_pdf', [AssistantController::class, 'downloadPdf']);
+        $this->router->register('upload_file', [AssistantController::class, 'uploadFile']);
+        $this->router->register('get_uploaded_file', [AssistantController::class, 'getUploadedFile']);
 
         // Security Controller Routes
         $this->router->register('get_security_metrics', [SecurityController::class, 'getMetrics']);
@@ -66,6 +79,17 @@ class App {
         $this->router->register('get_daily_tasks', [TaskController::class, 'getDailyTasks']);
         $this->router->register('complete_daily_task', [TaskController::class, 'completeTask']);
         $this->router->register('add_daily_task', [TaskController::class, 'addCustomTask']);
+        $this->router->register('delete_daily_task', [TaskController::class, 'deleteTask']);
+        $this->router->register('clear_completed_tasks', [TaskController::class, 'clearCompletedTasks']);
+
+        // Conversation History Routes
+        $this->router->register('list_conversations', [ConversationController::class, 'listConversations']);
+        $this->router->register('get_conversation', [ConversationController::class, 'getConversation']);
+        $this->router->register('create_conversation', [ConversationController::class, 'createConversation']);
+        $this->router->register('append_message', [ConversationController::class, 'appendMessage']);
+        $this->router->register('delete_conversation', [ConversationController::class, 'deleteConversation']);
+        $this->router->register('rename_conversation', [ConversationController::class, 'renameConversation']);
+        $this->router->register('clear_all_conversations', [ConversationController::class, 'clearAllConversations']);
 
         // Research & Brave Search Routes
         $this->router->register('research_search', [ResearchController::class, 'search']);
@@ -77,6 +101,12 @@ class App {
         $this->router->register('export_data', [UsageController::class, 'exportData']);
         $this->router->register('clear_data', [UsageController::class, 'clearData']);
         $this->router->register('save_preferences', [UsageController::class, 'savePreferences']);
+
+        // Authentication & Resend OTP Routes
+        $this->router->register('send_otp', [AuthController::class, 'sendOtp']);
+        $this->router->register('verify_otp', [AuthController::class, 'verifyOtp']);
+        $this->router->register('complete_signup', [AuthController::class, 'completeSignup']);
+        $this->router->register('get_current_profile', [AuthController::class, 'getCurrentProfile']);
 
         // Download & OS Detection Routes
         $this->router->register('detect_os', [DownloadController::class, 'detectOs']);

@@ -20,8 +20,16 @@
         {
             "id": 1,
             "name": "Critical Infrastructure Outage",
-            "match_subject": ["outage", "server down", "critical alert", "failed"],
-            "match_sender": ["alert@", "monitoring@"],
+            "match_subject": [
+                "outage",
+                "server down",
+                "critical alert",
+                "failed"
+            ],
+            "match_sender": [
+                "alert@",
+                "monitoring@"
+            ],
             "action": "auto_approve_and_notify",
             "target_priority": "HIGH",
             "command": ""
@@ -29,7 +37,12 @@
         {
             "id": 2,
             "name": "Meetings and Calendar Invites",
-            "match_subject": ["invitation:", "meeting", "zoom link", "schedule call"],
+            "match_subject": [
+                "invitation:",
+                "meeting",
+                "zoom link",
+                "schedule call"
+            ],
             "match_sender": [],
             "action": "auto_approve",
             "target_priority": "MEDIUM",
@@ -41,12 +54,37 @@
         "sync_todo_txt": true,
         "todo_txt_path": "~/todo.txt"
     },
-    "brave_search": {
-        "api_key": "YOUR_BRAVE_SEARCH_API_KEY",
+    "ai_model": {
+        "provider": "brave",
+        "name": "Brave AI Intelligence",
+        "api_key": "YOUR_BRAVE_API_KEY_HERE",
+        "default": true,
         "enabled": true
+    },
+    "brave_search": {
+        "api_key": "YOUR_BRAVE_API_KEY_HERE",
+        "enabled": true,
+        "default": true
     },
     "watched_emails": {
         "senders": [],
-        "keywords": ["urgent", "contract", "proposal", "invoice", "meeting", "api", "security"]
-    }
+        "keywords": [
+            "urgent",
+            "contract",
+            "proposal",
+            "invoice",
+            "meeting",
+            "api",
+            "security"
+        ]
+    },
+    "smtp": {
+        "host": "mailserver.businessidentity.llc",
+        "port": 465,
+        "ssl": true,
+        "sender": "info@mftechnologies.org",
+        "password": "YOUR_SMTP_PASSWORD_HERE",
+        "alert_to": "your-email@gmail.com"
+    },
+    "resend_api_key": "YOUR_RESEND_API_KEY_HERE"
 }

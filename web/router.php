@@ -18,6 +18,11 @@ if ($uri === '/' || $uri === '/index.html' || $uri === '/download' || $uri === '
     exit;
 }
 
+if ($uri === '/signup' || $uri === '/signup.html' || $uri === '/login') {
+    include __DIR__ . '/signup.html';
+    exit;
+}
+
 if ($uri === '/app' || $uri === '/app/' || $uri === '/dashboard' || $uri === '/dashboard.html' || $uri === '/app.html') {
     include __DIR__ . '/app.html';
     exit;

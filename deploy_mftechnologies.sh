@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# BenNeta Docker Subdomain Deployment for benneta.mftechnologies.org
+# EZER Docker Subdomain Deployment for benneta.mftechnologies.org
 # Runs as an isolated service alongside other company web services (icaps, karibu, nexora)
 set -euo pipefail
 
@@ -7,7 +7,7 @@ SUBDOMAIN="benneta.mftechnologies.org"
 CONTAINER_NAME="benneta"
 INTERNAL_PORT=8765
 
-echo "[*] BenNeta Subdomain Deployment -> ${SUBDOMAIN}"
+echo "[*] EZER Subdomain Deployment -> ${SUBDOMAIN}"
 
 # 1. Must be root
 if [ "$EUID" -ne 0 ]; then
@@ -16,7 +16,7 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 # 2. Rebuild and launch Docker Compose
-echo "[*] Deploying BenNeta Docker container..."
+echo "[*] Deploying EZER Docker container..."
 docker compose down 2>/dev/null || true
 docker compose up -d --build
 
@@ -28,6 +28,6 @@ apache2ctl configtest
 systemctl reload apache2
 
 echo "[+] Deployment complete!"
-echo "[+] BenNeta Subdomain: https://${SUBDOMAIN}/"
+echo "[+] EZER Subdomain: https://${SUBDOMAIN}/"
 echo "[+] Dashboard App:     https://${SUBDOMAIN}/app"
 echo "[+] Downloads:         https://${SUBDOMAIN}/downloads/"

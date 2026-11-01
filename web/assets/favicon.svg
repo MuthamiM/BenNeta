@@ -1,16 +1,20 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
-    <linearGradient id="favTerracotta" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#e08264" />
-      <stop offset="100%" stop-color="#c46344" />
+    <linearGradient id="xGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#60a5fa" />
+      <stop offset="60%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#1d4ed8" />
     </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
   </defs>
-  <rect width="32" height="32" rx="7" fill="#14171f"/>
-  <g transform="translate(16, 16)">
-    <line x1="0" y1="-10" x2="0" y2="10" stroke="url(#favTerracotta)" stroke-width="2.8" stroke-linecap="round"/>
-    <line x1="-10" y1="0" x2="10" y2="0" stroke="url(#favTerracotta)" stroke-width="2.8" stroke-linecap="round"/>
-    <line x1="-7" y1="-7" x2="7" y2="7" stroke="url(#favTerracotta)" stroke-width="2.8" stroke-linecap="round"/>
-    <line x1="-7" y1="7" x2="7" y2="-7" stroke="url(#favTerracotta)" stroke-width="2.8" stroke-linecap="round"/>
-    <circle cx="0" cy="0" r="1.8" fill="#ffffff" />
+  <rect x="16" y="16" width="480" height="480" rx="105" fill="#141416" stroke="#32323a" stroke-width="4"/>
+  <g font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif" font-weight="800" text-anchor="middle" dominant-baseline="central">
+    <text x="110" y="258" font-size="115" fill="#f4f4f7">E</text>
+    <text x="228" y="256" font-size="190" font-weight="900" fill="url(#xGrad)" filter="url(#glow)">X</text>
+    <text x="345" y="258" font-size="115" fill="#f4f4f7">E</text>
+    <text x="425" y="258" font-size="115" fill="#f4f4f7">R</text>
   </g>
 </svg>

@@ -50,6 +50,10 @@ class DatabaseService {
         return $stmt->rowCount();
     }
 
+    public function lastInsertId(): int {
+        return (int)$this->getPdo()->lastInsertId();
+    }
+
     public function getSystemState(string $key, ?string $default = null): ?string {
         try {
             $stmt = $this->getPdo()->prepare("SELECT value FROM system_state WHERE key = ?");

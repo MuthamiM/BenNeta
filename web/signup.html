@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up — EXER PC Intelligence</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/icon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-base: #07090e;
+            --bg-card: #0f131c;
+            --bg-card-elevated: #151a26;
+            --bg-input: rgba(255, 255, 255, 0.05);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-focus: #3b82f6;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --accent-green: #10b981;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* SPLIT SCREEN LAYOUT */
+        .auth-container {
+            display: flex;
+            width: 100vw;
+            min-height: 100vh;
+        }
+
+        /* LEFT SHOWCASE PANE (50%) */
+        .auth-showcase-pane {
+            flex: 1;
+            background: radial-gradient(circle at 50% 30%, rgba(59, 130, 246, 0.12) 0%, transparent 60%),
+                        radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+                        #080a11;
+            border-right: 1px solid var(--border-subtle);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 3.5rem 2.5rem 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .showcase-center-wrap {
+            width: 100%;
+            max-width: 520px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: auto 0;
+        }
+
+        /* Elevated Card (Matches screenshot mockup card) */
+        .showcase-card {
+            width: 100%;
+            background: linear-gradient(180deg, #121722 0%, #0d111a 100%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            padding: 2rem 2.2rem;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+            text-align: center;
+            position: relative;
+        }
+
+        .showcase-tag {
+            font-size: 0.76rem;
+            font-weight: 700;
+            color: #93c5fd;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.5rem;
+        }
+
+        .showcase-heading {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Mockup Laptop Display */
+        .mockup-display {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.9) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 1.25rem;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            text-align: left;
+            min-height: 180px;
+        }
+
+        .mockup-laptop-art {
+            flex: 1.2;
+            background: #090c14;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 0.75rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .mockup-chat-bubble {
+            font-size: 0.68rem;
+            padding: 0.45rem 0.65rem;
+            border-radius: 6px;
+            margin-bottom: 0.4rem;
+            line-height: 1.35;
+        }
+
+        .mockup-chat-user {
+            background: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+            align-self: flex-end;
+        }
+
+        .mockup-chat-bot {
+            background: rgba(255, 255, 255, 0.06);
+            color: #e2e8f0;
+        }
+
+        .mockup-chart-widget {
+            flex: 1;
+            background: #090c14;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .mockup-chart-title {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .mockup-chart-value {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #10b981;
+            margin: 0.25rem 0;
+        }
+
+        .mockup-wave {
+            width: 100%;
+            height: 38px;
+            background: linear-gradient(180deg, rgba(16, 185, 129, 0.25) 0%, transparent 100%);
+            border-top: 2px solid #10b981;
+            border-radius: 4px 4px 0 0;
+        }
+
+        /* Carousel Controls (Matches screenshot: < || . . . >) */
+        .showcase-carousel-nav {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .carousel-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.15s ease;
+        }
+
+        .carousel-btn:hover {
+            color: #ffffff;
+        }
+
+        .carousel-dots {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .carousel-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .carousel-dot.active {
+            width: 18px;
+            border-radius: 9999px;
+            background: #ffffff;
+        }
+
+        /* Bottom Trust Logos */
+        .showcase-footer {
+            width: 100%;
+            text-align: center;
+        }
+
+        .showcase-footer-title {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.85rem;
+        }
+
+        .trust-logos-row {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            align-items: center;
+            opacity: 0.75;
+        }
+
+        .trust-logo-item {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: #94a3b8;
+            letter-spacing: 0.02em;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        /* RIGHT FORM PANE (50%) */
+        .auth-form-pane {
+            flex: 1;
+            background: #0b0e15;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 2.2rem 3rem;
+            overflow-y: auto;
+        }
+
+        /* Top Bar: Language + Log in link */
+        .form-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+
+        .lang-dropdown-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 0.45rem 0.85rem;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .lang-dropdown-btn:hover {
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .top-login-link {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .top-login-link a {
+            color: #93c5fd;
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 0.35rem;
+            cursor: pointer;
+        }
+
+        .top-login-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Form Center Wrap */
+        .form-center-wrap {
+            max-width: 380px;
+            width: 100%;
+            margin: auto;
+            padding: 1.5rem 0;
+        }
+
+        .brand-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .brand-logo-icon {
+            width: 32px;
+            height: 32px;
+        }
+
+        .brand-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: #ffffff;
+        }
+
+        .form-headline {
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.3;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.75rem;
+        }
+
+        /* Social Auth Buttons */
+        .btn-social {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            color: #ffffff;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            margin-bottom: 0.75rem;
+        }
+
+        .btn-social:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .social-icon-svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        /* Sign Up with Email Button */
+        .btn-email-primary {
+            width: 100%;
+            background: #272f3e;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            color: #ffffff;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-email-primary:hover {
+            background: #333d4f;
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ACTIVE MULTI-STEP SECTIONS */
+        .auth-step {
+            display: none;
+            animation: fadeIn 0.25s ease-out;
+        }
+
+        .auth-step.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .input-group {
+            margin-bottom: 1.15rem;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.4rem;
+        }
+
+        .text-input {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            color: #ffffff;
+            font-size: 0.9rem;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.18s ease;
+        }
+
+        .text-input:focus {
+            border-color: var(--border-focus);
+            background: rgba(59, 130, 246, 0.06);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+        .btn-action-submit {
+            width: 100%;
+            background: var(--primary);
+            border: none;
+            border-radius: 10px;
+            padding: 0.8rem 1.25rem;
+            color: #ffffff;
+            font-size: 0.92rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
+        }
+
+        .btn-action-submit:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.45);
+        }
+
+        .btn-action-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* 6 DIGIT OTP BOXES */
+        .otp-inputs-row {
+            display: flex;
+            gap: 8px;
+            justify-content: space-between;
+            margin: 1.25rem 0 1.5rem;
+        }
+
+        .otp-digit {
+            width: 50px;
+            height: 58px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+            font-family: var(--font-mono);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            color: #60a5fa;
+            outline: none;
+            transition: all 0.15s ease;
+        }
+
+        .otp-digit:focus {
+            border-color: #60a5fa;
+            background: rgba(59, 130, 246, 0.1);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        /* Status & Feedback Banners */
+        .alert-banner {
+            border-radius: 8px;
+            padding: 0.65rem 0.85rem;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+            display: none;
+            line-height: 1.4;
+        }
+
+        .alert-banner.info {
+            display: block;
+            background: rgba(59, 130, 246, 0.12);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #93c5fd;
+        }
+
+        .alert-banner.error {
+            display: block;
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
+
+        .alert-banner.success {
+            display: block;
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+        }
+
+        /* Bottom helper links */
+        .form-footer-sub {
+            margin-top: 1.25rem;
+            text-align: center;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .form-footer-sub a {
+            color: #93c5fd;
+            text-decoration: none;
+        }
+
+        /* Responsive Breakpoint */
+        @media (max-width: 900px) {
+            .auth-container {
+                flex-direction: column;
+            }
+            .auth-showcase-pane {
+                display: none;
+            }
+            .auth-form-pane {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <!-- LEFT SHOWCASE PANE (50%) -->
+        <div class="auth-showcase-pane">
+            <div></div> <!-- Spacer -->
+
+            <div class="showcase-center-wrap">
+                <div class="showcase-card">
+                    <div class="showcase-tag" id="carousel-tag">Results</div>
+                    <div class="showcase-heading" id="carousel-heading">Get up to 3.5x faster desktop triage</div>
+
+                    <div class="mockup-display">
+                        <div class="mockup-laptop-art">
+                            <div style="font-size: 0.65rem; color: #64748b; font-weight: 700; margin-bottom: 0.4rem;">EXER 4o Intelligence</div>
+                            <div class="mockup-chat-bubble mockup-chat-user">prepare an excel sheet of candidates</div>
+                            <div class="mockup-chat-bubble mockup-chat-bot">Exported 17 applicants to candidate_registry.xlsx</div>
+                        </div>
+                        <div class="mockup-chart-widget">
+                            <div>
+                                <div class="mockup-chart-title">RAM Budget</div>
+                                <div class="mockup-chart-value">&lt;28 MB</div>
+                            </div>
+                            <div class="mockup-wave"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Carousel Controls -->
+                <div class="showcase-carousel-nav">
+                    <button class="carousel-btn" onclick="prevSlide()" title="Previous">&#8249;</button>
+                    <button class="carousel-btn" id="carousel-play-btn" onclick="togglePlay()" title="Pause/Play" style="font-size: 0.8rem;">❚❚</button>
+                    <div class="carousel-dots">
+                        <div class="carousel-dot active" onclick="setSlide(0)"></div>
+                        <div class="carousel-dot" onclick="setSlide(1)"></div>
+                        <div class="carousel-dot" onclick="setSlide(2)"></div>
+                    </div>
+                    <button class="carousel-btn" onclick="nextSlide()" title="Next">&#8250;</button>
+                </div>
+            </div>
+
+            <!-- Bottom Trust Badges -->
+            <div class="showcase-footer">
+                <div class="showcase-footer-title">Trusted across production environments</div>
+                <div class="trust-logos-row">
+                    <span class="trust-logo-item">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+                        Linux Desktop
+                    </span>
+                    <span class="trust-logo-item">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                        PostgreSQL
+                    </span>
+                    <span class="trust-logo-item">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                        LibreOffice
+                    </span>
+                    <span class="trust-logo-item">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        Security Sentinel
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT FORM PANE (50%) -->
+        <div class="auth-form-pane">
+            <!-- Top Bar -->
+            <div class="form-top-bar">
+                <div class="lang-dropdown-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                    <span>English</span>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                </div>
+
+                <div class="top-login-link">
+                    Already have an account? <a href="#" onclick="showLoginMode()">Log in</a>
+                </div>
+            </div>
+
+            <!-- Form Center Wrap -->
+            <div class="form-center-wrap">
+                <div class="brand-header">
+                    <svg class="brand-logo-icon" viewBox="0 0 24 24" fill="none">
+                        <rect x="2" y="2" width="20" height="20" rx="5" fill="#3b82f6"/>
+                        <path d="M7 7h10v3H10v2h6v3h-6v2h7v3H7V7z" fill="#ffffff"/>
+                    </svg>
+                    <span class="brand-title">EXER</span>
+                </div>
+
+                <h1 class="form-headline" id="main-form-title">
+                    Sign up today. Start with an email, command your desktop.
+                </h1>
+
+                <!-- Feedback Banner -->
+                <div id="auth-alert-banner" class="alert-banner"></div>
+
+                <!-- STEP 1: INITIAL CHOICE OR EMAIL INPUT -->
+                <div id="step-initial" class="auth-step active">
+                    <!-- Google Sign In -->
+                    <button type="button" class="btn-social" onclick="startSocialAuth('Google')">
+                        <svg class="social-icon-svg" viewBox="0 0 24 24">
+                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                        </svg>
+                        Sign up with Google
+                    </button>
+
+                    <!-- Microsoft Sign In -->
+                    <button type="button" class="btn-social" onclick="startSocialAuth('Microsoft')">
+                        <svg class="social-icon-svg" viewBox="0 0 24 24">
+                            <rect x="1" y="1" width="10" height="10" fill="#f25022"/>
+                            <rect x="13" y="1" width="10" height="10" fill="#7fba00"/>
+                            <rect x="1" y="13" width="10" height="10" fill="#00a4ef"/>
+                            <rect x="13" y="13" width="10" height="10" fill="#ffb900"/>
+                        </svg>
+                        Sign up with Microsoft
+                    </button>
+
+                    <div style="display: flex; align-items: center; gap: 0.85rem; margin: 1.25rem 0;">
+                        <div style="flex: 1; height: 1px; background: var(--border-subtle);"></div>
+                        <span style="font-size: 0.76rem; color: var(--text-muted); text-transform: uppercase;">or</span>
+                        <div style="flex: 1; height: 1px; background: var(--border-subtle);"></div>
+                    </div>
+
+                    <!-- Sign Up With Email Form -->
+                    <form onsubmit="handleSendOtp(event)">
+                        <div class="input-group">
+                            <label class="input-label" for="input-email">Gmail or Work Email</label>
+                            <input type="email" id="input-email" class="text-input" placeholder="musamwange42@gmail.com" required>
+                        </div>
+                        <button type="submit" id="btn-send-otp" class="btn-action-submit">
+                            Sign up with email
+                        </button>
+                    </form>
+
+                    <div class="form-footer-sub">
+                        By continuing, you agree to EXER's <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+                    </div>
+                </div>
+
+                <!-- STEP 2: ENTER OTP -->
+                <div id="step-otp" class="auth-step">
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 0.5rem;">
+                        We sent a 6-digit verification code to <strong id="display-target-email" style="color: #60a5fa;"></strong>.
+                    </p>
+
+                    <form onsubmit="handleVerifyOtp(event)">
+                        <div class="otp-inputs-row">
+                            <input type="text" class="otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                            <input type="text" class="otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                            <input type="text" class="otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                            <input type="text" class="otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                            <input type="text" class="otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                            <input type="text" class="otp-digit" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                        </div>
+
+                        <button type="submit" id="btn-verify-otp" class="btn-action-submit">
+                            Verify Code
+                        </button>
+                    </form>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.25rem; font-size: 0.8rem;">
+                        <a href="#" onclick="backToEmailStep()" style="color: var(--text-muted); text-decoration: none;">Change email</a>
+                        <button type="button" id="btn-resend" onclick="handleResendCode()" style="background: none; border: none; color: #93c5fd; font-size: 0.8rem; cursor: pointer; font-weight: 600;">
+                            Resend code
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STEP 3: CHOOSE USERNAME & GET STARTED -->
+                <div id="step-username" class="auth-step">
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem;">
+                        Verification successful! Choose your username to configure your EXER workspace.
+                    </p>
+
+                    <form onsubmit="handleCompleteSignup(event)">
+                        <div class="input-group">
+                            <label class="input-label" for="input-username">Username</label>
+                            <input type="text" id="input-username" class="text-input" placeholder="Musa" required autofocus>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label" for="input-google-pwd">Google App Password (Optional for Gmail auto-sync)</label>
+                            <input type="password" id="input-google-pwd" class="text-input" placeholder="•••• •••• •••• ••••">
+                            <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.35rem;">
+                                Generated in your Google Account Security settings. Can also be configured later in Profile.
+                            </div>
+                        </div>
+
+                        <button type="submit" id="btn-get-started" class="btn-action-submit" style="background: #10b981;">
+                            Get Started &#8594;
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Bottom Direct Access Link -->
+            <div style="text-align: center; font-size: 0.75rem; color: var(--text-muted);">
+                Autonomous Desktop Agent &bull; <a href="/app" style="color: #93c5fd; text-decoration: none;">Direct App Access</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentEmail = '';
+        let currentSlide = 0;
+        let slideInterval = null;
+        let isPlaying = true;
+
+        const slides = [
+            {
+                tag: 'Results',
+                heading: 'Get up to 3.5x faster desktop triage'
+            },
+            {
+                tag: 'Autonomous',
+                heading: 'Generate styled Excel workbooks in seconds'
+            },
+            {
+                tag: 'Hardware Guardian',
+                heading: 'Strict <28MB RAM budget enforced at kernel level'
+            }
+        ];
+
+        function setSlide(idx) {
+            currentSlide = idx;
+            document.getElementById('carousel-tag').innerText = slides[idx].tag;
+            document.getElementById('carousel-heading').innerText = slides[idx].heading;
+            document.querySelectorAll('.carousel-dot').forEach((d, i) => {
+                d.classList.toggle('active', i === idx);
+            });
+        }
+
+        function nextSlide() {
+            setSlide((currentSlide + 1) % slides.length);
+        }
+
+        function prevSlide() {
+            setSlide((currentSlide - 1 + slides.length) % slides.length);
+        }
+
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            document.getElementById('carousel-play-btn').innerText = isPlaying ? '❚❚' : '▶';
+            if (isPlaying) {
+                slideInterval = setInterval(nextSlide, 4500);
+            } else {
+                clearInterval(slideInterval);
+            }
+        }
+
+        slideInterval = setInterval(nextSlide, 4500);
+
+        // Feedback Banner
+        function showAlert(msg, type = 'info') {
+            const b = document.getElementById('auth-alert-banner');
+            b.className = `alert-banner ${type}`;
+            b.innerText = msg;
+        }
+
+        function clearAlert() {
+            const b = document.getElementById('auth-alert-banner');
+            b.style.display = 'none';
+        }
+
+        function switchStep(stepId) {
+            document.querySelectorAll('.auth-step').forEach(s => s.classList.remove('active'));
+            const target = document.getElementById(stepId);
+            if (target) target.classList.add('active');
+            clearAlert();
+        }
+
+        function startSocialAuth(provider) {
+            showAlert(`Connecting to ${provider} OAuth...`, 'info');
+            setTimeout(() => {
+                document.getElementById('input-email').value = 'musamwange42@gmail.com';
+                handleSendOtp(new Event('submit'));
+            }, 600);
+        }
+
+        function showLoginMode() {
+            document.getElementById('main-form-title').innerText = 'Welcome back. Log in to your EXER workspace.';
+            document.getElementById('btn-send-otp').innerText = 'Log in with email';
+            document.getElementById('input-email').focus();
+        }
+
+        // STEP 1: SEND OTP via Resend API
+        async function handleSendOtp(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            const emailInput = document.getElementById('input-email');
+            const email = emailInput.value.trim();
+            if (!email) return;
+
+            currentEmail = email;
+            const btn = document.getElementById('btn-send-otp');
+            btn.disabled = true;
+            btn.innerText = 'Sending security code...';
+            showAlert('Sending 6-digit OTP code to your Gmail via Resend...', 'info');
+
+            try {
+                const res = await fetch('/api.php?action=send_otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email })
+                });
+                const data = await res.json();
+                btn.disabled = false;
+                btn.innerText = 'Sign up with email';
+
+                if (data.status === 'SUCCESS' || data.success) {
+                    document.getElementById('display-target-email').innerText = email;
+                    document.getElementById('main-form-title').innerText = 'Check your Gmail for verification code.';
+                    switchStep('step-otp');
+
+                    if (data.sandbox_code) {
+                        showAlert(`Note: Resend Sandbox delivered code: ${data.sandbox_code}. Enter this code below.`, 'info');
+                        // Pre-populate if returned in sandbox
+                        const digits = String(data.sandbox_code).split('');
+                        const inputs = document.querySelectorAll('.otp-digit');
+                        digits.forEach((d, i) => { if (inputs[i]) inputs[i].value = d; });
+                    } else {
+                        showAlert(`6-digit verification code sent to ${email}.`, 'success');
+                        setTimeout(() => {
+                            const first = document.querySelector('.otp-digit');
+                            if (first) first.focus();
+                        }, 100);
+                    }
+                } else {
+                    showAlert(data.error || 'Failed to dispatch email. Please check your address.', 'error');
+                }
+            } catch (err) {
+                btn.disabled = false;
+                btn.innerText = 'Sign up with email';
+                showAlert('Network connection error. Please try again.', 'error');
+            }
+        }
+
+        function backToEmailStep() {
+            document.getElementById('main-form-title').innerText = 'Sign up today. Start with an email, command your desktop.';
+            switchStep('step-initial');
+        }
+
+        function handleResendCode() {
+            showAlert('Resending code to ' + currentEmail + '...', 'info');
+            handleSendOtp(new Event('submit'));
+        }
+
+        // SETUP OTP AUTO-ADVANCE & PASTE
+        const otpInputs = document.querySelectorAll('.otp-digit');
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value.length === 1) {
+                    if (index < otpInputs.length - 1) {
+                        otpInputs[index + 1].focus();
+                    }
+                }
+            });
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                    otpInputs[index - 1].focus();
+                }
+            });
+
+            input.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const pasteData = (e.clipboardData || window.clipboardData).getData('text').trim();
+                if (/^\d{6}$/.test(pasteData)) {
+                    pasteData.split('').forEach((char, i) => {
+                        if (otpInputs[i]) otpInputs[i].value = char;
+                    });
+                    otpInputs[5].focus();
+                    handleVerifyOtp(new Event('submit'));
+                }
+            });
+        });
+
+        // STEP 2: VERIFY OTP
+        async function handleVerifyOtp(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            let code = '';
+            otpInputs.forEach(inp => code += inp.value.trim());
+
+            if (code.length !== 6) {
+                showAlert('Please enter the complete 6-digit verification code.', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('btn-verify-otp');
+            btn.disabled = true;
+            btn.innerText = 'Verifying...';
+            showAlert('Verifying security code...', 'info');
+
+            try {
+                const res = await fetch('/api.php?action=verify_otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: currentEmail, code: code })
+                });
+                const data = await res.json();
+                btn.disabled = false;
+                btn.innerText = 'Verify Code';
+
+                if (data.status === 'SUCCESS' || data.success) {
+                    document.getElementById('main-form-title').innerText = 'Choose your username & get started.';
+                    // Pre-fill default username
+                    const unameInput = document.getElementById('input-username');
+                    if (unameInput) {
+                        unameInput.value = data.username || currentEmail.split('@')[0];
+                    }
+                    switchStep('step-username');
+                    showAlert('Email verified successfully!', 'success');
+                } else {
+                    showAlert(data.error || 'Invalid or expired code. Please try again.', 'error');
+                }
+            } catch (err) {
+                btn.disabled = false;
+                btn.innerText = 'Verify Code';
+                showAlert('Verification network error.', 'error');
+            }
+        }
+
+        // STEP 3: COMPLETE SIGN UP & GET STARTED
+        async function handleCompleteSignup(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            const username = document.getElementById('input-username').value.trim();
+            const googleAppPwd = document.getElementById('input-google-pwd').value.trim();
+
+            if (!username) {
+                showAlert('Please choose a username.', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('btn-get-started');
+            btn.disabled = true;
+            btn.innerText = 'Configuring workspace...';
+
+            try {
+                const res = await fetch('/api.php?action=complete_signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: currentEmail,
+                        username: username,
+                        google_app_password: googleAppPwd
+                    })
+                });
+                const data = await res.json();
+
+                if (data.status === 'SUCCESS' || data.success) {
+                    // Save to localStorage for instant client hydration
+                    localStorage.setItem('exer_username', username);
+                    localStorage.setItem('exer_email', currentEmail);
+                    if (googleAppPwd) localStorage.setItem('exer_google_app_pwd', googleAppPwd);
+
+                    showAlert('Welcome to EXER! Redirecting to your workspace...', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/app';
+                    }, 650);
+                } else {
+                    btn.disabled = false;
+                    btn.innerText = 'Get Started →';
+                    showAlert(data.error || 'Failed to complete profile setup.', 'error');
+                }
+            } catch (err) {
+                btn.disabled = false;
+                btn.innerText = 'Get Started →';
+                showAlert('Network error while completing setup.', 'error');
+            }
+        }
+    </script>
+</body>
+</html>
